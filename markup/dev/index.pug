@@ -1,0 +1,16 @@
+//- INDEX PAGE
+//- dev/index.pug
+doctype html
+html(lang='ru')
+  include ./templates/head
+  body
+    include ./templates/header
+    .page-wrapper
+      include ./templates/index/index-page
+      include ./templates/footer
+    .modal-container
+      include ./templates/modals/app-modal
+      include ./templates/modals/sign-in-modal
+      include ./templates/modals/thank-you-modal
+    include ./templates/scripts
+    include ./templates/resources

@@ -1,0 +1,27 @@
+{
+  "name": "devfestbaltic",
+  "version": "1.0.0",
+  "description": "DevFest Baltic 2018 landing page",
+  "main": "index.js",
+  "author": "Artem Mukhartov",
+  "license": "MIT",
+  "scripts": {
+    "start": "gulp"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.18.6",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^4.1.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-imagemin": "^4.1.0",
+    "gulp-minify-css": "^1.2.4",
+    "gulp-pug": "^3.0.4",
+    "gulp-rename": "^1.2.2",
+    "gulp-stylus": "^2.5.0",
+    "gulp-uglify": "^2.0.0"
+  },
+  "dependencies": {
+    "jquery": "^3.3.1",
+    "what-input": "^5.0.5"
+  }
+}

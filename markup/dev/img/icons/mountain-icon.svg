@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="61px" height="60px" viewBox="0 0 61 60" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52 (66869) - http://www.bohemiancoding.com/sketch -->
+    <title>Group</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Win-the-prize-text" transform="translate(-806.000000, 0.000000)">
+            <g id="Group">
+                <g transform="translate(806.000000, 0.000000)">
+                    <rect id="Rectangle" fill="#FFFFFF" opacity="0.3859375" x="0" y="0" width="61" height="60" rx="12"></rect>
+                    <g id="Image" transform="translate(7.000000, 20.000000)">
+                        <polygon id="Triangle-2" fill="#FFFFFF" points="14.5882353 6.06666667 29.1764706 21 0 21"></polygon>
+                        <polygon id="Triangle-2-Copy" fill="#FFFFFF" points="23.7058824 0 44.4117647 21 3 21"></polygon>
+                        <rect id="Rectangle-4" fill="#C279CE" transform="translate(18.419829, 9.399663) rotate(45.000000) translate(-18.419829, -9.399663) " x="9.71394618" y="8.69966329" width="17.4117647" height="1.4" rx="0.6972504"></rect>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,7 @@
+node_modules
+/build
+/*.log
+*.lock
+/markup/prod
+
+package-lock.json

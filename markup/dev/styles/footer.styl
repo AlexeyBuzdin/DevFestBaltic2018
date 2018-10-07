@@ -1,0 +1,262 @@
+// ************
+// FOOTER STYLE
+// ************
+.footer
+  display: block
+  width 100%
+  max-width 1176px
+  height auto
+  margin 0 auto
+  padding 38px 12px 41px
+
+
+// FOOTER SUBSCRIBE BLOCK
+.footer-subscribe-block
+  display: block
+  max-width 662px
+  margin 0 0 86px
+  @media (max-width 767px)
+    margin 0 0 60px
+
+.footer-subscribe-block__title
+  display block
+  width 100%
+  height auto
+  margin 0 0 44px
+  font-family: monorobot
+  font-size 18px
+  font-weight: 500
+  line-height 24px
+  color pinky
+  @media (max-width 767px)
+    margin 0 0 25px
+
+.footer-subscribe-block__form
+  display: flex
+  flex-direction row
+  flex-wrap nowrap
+  flex-flow row nowrap
+  align-items flex-start
+  align-content flex-start
+  justify-content: flex-start
+  @media (max-width 767px)
+    display block
+
+.footer-subscribe-block__input
+  appearance none 
+  -webkit-appearance: none
+  display: block
+  width 100%
+  max-width 465px
+  height 50px
+  margin 0 22px 0 0
+  padding 0 10px
+  border 3px solid pinky
+  font-family: monorobot
+  font-size 18px
+  font-weight: 500
+  line-height 24px
+  color pinky
+  background-color transparent
+  box-shadow none 
+  &:hover
+  &:focus
+    background-color transparent
+    box-shadow none 
+    outline none
+    border 3px solid pinky
+  @media (max-width 767px)
+    margin 0 0 20px
+
+
+.footer-subscribe-block__submit
+  appearance none 
+  -webkit-appearance: none
+  display: block
+  width 153px
+  flex-shrink 0
+  flex-grow 0
+  height 50px
+  margin 0
+  padding 0 4px
+  border 3px solid pinky
+  font-family: monorobot
+  font-size 18px
+  font-weight: 500
+  line-height 18px
+  text-align center
+  color pinky
+  background-color transparent
+  box-shadow none 
+  outline none
+  cursor pointer
+  transition all .27s ease
+  &:hover
+  &:focus
+    background-color transparent
+    box-shadow none 
+    outline none
+    border 3px solid pinky
+    background-color #fff
+    color purpy
+
+
+// FOOTER LINKS BLOCK
+.footer-links-block
+  display: flex
+  flex-direction row
+  flex-wrap nowrap
+  flex-flow row nowrap
+  align-items flex-start
+  align-content flex-start
+  justify-content: flex-start
+  width 100%
+  height auto
+  margin 0 0 282px
+  @media (min-width 768px) and (max-width 1112px)
+    margin 0 0 130px
+  @media (max-width 767px)
+    flex-wrap wrap
+    flex-flow row wrap
+    margin 0 0 90px
+
+.footer-links-block__column
+  display: block
+  width 33%
+  flex-basis 33%
+  flex-grow 0
+  flex-shrink 0
+  padding 0 12px
+  &:first-child
+    padding 0 12px 0 0
+  &:last-child
+    padding 0 0 0 12px
+  @media (max-width 767px)
+    width 50%
+    flex-basis 50%
+    &:first-child
+      padding 0
+      width 32%
+      flex-basis 32%
+    &:nth-child(2)
+      width 68%
+      flex-basis 68%
+    &:last-child
+      padding 0
+
+
+.footer-links-block__title
+  display block
+  width 100%
+  height auto
+  margin 0 0 26px
+  font-family: monorobot
+  font-size 18px
+  font-weight: 500
+  line-height 24px
+  color pinky
+
+.follow-us-links
+  display: flex
+  flex-direction row
+  flex-wrap wrap
+  flex-flow row wrap
+  align-items flex-start
+  align-content flex-start
+  justify-content: flex-start
+
+.follow-us-links__link
+  display: block
+  width 19px
+  height 19px
+  margin 0 16px 16px 0
+  padding 0
+  background-color transparent
+  background-repeat no-repeat
+  background-size contain
+  background-position: 0 0
+  transition all .27s ease
+  &:hover
+  &:focus
+    transform scale(1.1)
+
+.follow-us-links__link_twitter
+  background-image url('../img/icons/twitter-icon.png')
+.follow-us-links__link_fb
+  background-image url('../img/icons/facebook-icon.png')
+
+
+.oraganizer-gdg-riga
+  display: block
+  width 122px
+  height 26px
+  margin 0 0 18px
+  padding 0 0 0 22px
+  background-color transparent
+  background-image: url('../img/icons/organizer-icon.svg')
+  background-repeat no-repeat
+  background-position: 0 0
+  background-size 15px auto
+  & span
+    display: block
+    width 100px
+    height 24px
+    margin 2px 0 0
+    background-color transparent
+    background-image: url('../img/icons/GDG-Riga-logo.svg')
+    background-repeat no-repeat
+    background-position: 0 0
+    background-size contain
+    opacity 0.5
+    transition all .27s ease
+  &:hover
+    & span 
+      opacity 1
+
+.oraganizer-gdg-daugavpils
+  display: block
+  width 187px
+  height 25px
+  margin 0 0 18px
+  padding 0 0 0 22px
+  background-color transparent
+  background-image: url('../img/icons/organizer-icon.svg')
+  background-repeat no-repeat
+  background-position: 0 0
+  background-size 15px auto
+  & span
+    display: block
+    width 165px
+    height 24px
+    margin 1px 0 0
+    background-color transparent
+    background-image: url('../img/icons/GDG-Daugavpils-logo.svg')
+    background-repeat no-repeat
+    background-position: 0 0
+    background-size contain
+    opacity 0.5
+    transition all .27s ease
+  &:hover
+    & span 
+      opacity 1
+
+.partner-google
+  display: block
+  width 95px
+  height 32px
+  background-color transparent
+  background-image url('../img/icons/google-logo-pink.svg')
+  background-repeat: no-repeat
+  background-position: 0 0 
+  background-size contain
+
+.footer-copyright
+  display inline-block
+  width auto
+  height 21px
+  margin 0
+  font-family: monorobot
+  font-size 18px
+  font-weight: 400
+  line-height 21px
+  color pinky

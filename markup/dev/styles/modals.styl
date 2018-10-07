@@ -1,0 +1,279 @@
+// ********************
+// MODAL WINDOWS STYLES
+// ********************
+
+.modal-container
+  display: block
+  width: 100%
+  height: 100%
+  min-height 100vh
+  max-height 100vh
+  padding 147px 12px 30px
+  background-color: transparent
+  position: fixed
+  top: 0
+  left: 0
+  z-index: -111
+  opacity 0
+  overflow: hidden
+  transition: opacity .27s ease
+  @media (max-width 767px)
+    padding 10px
+
+// Modal window container - visible
+.modal-container_visible
+  opacity 1
+  z-index 9
+  overflow-y: auto
+  -webkit-overflow-scrolling touch
+  transition: opacity .27s ease
+  @media (max-width: 767px)
+    min-height: 100vh
+
+.modal
+  display block
+  width 100%
+  max-width 805px
+  margin 0 auto
+  position absolute
+  top 147px
+  left 0
+  right 0
+  z-index -99
+  opacity 0
+  @media (max-width 767px)
+    width calc(100% - 20px)
+    top 10px
+
+.modal_visible
+  top 147px
+  z-index 10
+  opacity 1
+  @media (max-width 767px)
+    top 10px
+    left 10px
+
+.modal-head
+  display: block
+  width 100%
+  height 85px
+  margin 0
+  padding: 27px 85px 26px 24px
+  background-color #FF4081
+  position relative
+
+.modal-head__title
+  display block
+  width 100%
+  height auto
+  margin 0
+  font-family: monorobot
+  font-size 24px
+  font-weight: normal
+  line-height 32px
+  color #fff
+
+.modal-head__title_app
+  &:before
+    content '\00040'
+
+.modal-close
+  display: block
+  width 85px
+  height 85px
+  position absolute
+  top 0
+  right 0
+  z-index 1
+  background-image url('../img/icons/close-icon.svg')
+  background-repeat no-repeat
+  background-size 17px auto
+  background-position 50% 50%
+  cursor pointer
+  transition all .27s ease
+  &:hover
+  &:focus
+    transform rotate(180deg)
+
+
+.modal-content
+  display: block
+  width 100%
+  height auto
+  margin 0
+  padding 62px 24px
+  background-color #fff
+
+.app-modal-content
+  display: flex
+  flex-direction row
+  flex-wrap nowrpap 
+  flex-flow row nowrap
+  align-items flex-start
+  align-content flex-start
+  justify-content: space-between
+  @media (max-width 767px)
+    display block
+
+.app-modal-content__app-links
+  display: block
+  width 100%
+  max-width 161px
+  flex-grow 0
+  flex-shrink 0
+  height auto
+  margin 0 auto
+  padding 0 12px
+
+.app-link-appstore
+  display: block
+  width 137px
+  height 40px
+  margin 0 0 16px
+  background-color transparent
+  background-image url('../img/icons/appstore-link-icon.svg')
+  background-repeat no-repeat
+  background-position 0 0
+  background-size contain
+  cursor pointer
+  transition all .2s ease
+  &:hover
+  &:focus
+    transform scale(1.1)
+
+.app-link-gplay
+  display: block
+  width 137px
+  height 40px
+  margin 0 0 16px
+  background-color transparent
+  background-image url('../img/icons/gplay-link-icon.svg')
+  background-repeat no-repeat
+  background-position 0 0
+  background-size contain
+  cursor pointer
+  transition all .2s ease
+  &:hover
+  &:focus
+    transform scale(1.1)
+
+.app-modal-content__description
+  display: block
+  width 100%
+  max-width 366px
+  flex-grow 0
+  flex-shrink 1
+  margin 0 auto
+
+
+.app-modal-bottom
+  display: flex
+  flex-direction row
+  flex-wrap nowrpap 
+  flex-flow row nowrap
+  align-items center
+  align-content flex-start
+  justify-content: flex-start
+
+.app-modal-bottom__choose
+  display: block
+  width 172px
+  height 65px
+  margin 0 24px 0 0
+  border none
+  font-family monorobot
+  font-size 24px
+  font-weight 500
+  line-height 65px
+  color #fff
+  text-align: center
+  text-transform uppercase
+  cursor pointer
+  background-color pinkerton
+  transition all .27s ease
+  &:hover
+  &:focus
+    background-color purpy
+
+.app-modal-bottom__votes
+  display: inline-block
+  width auto
+  height 26px
+  margin 0
+  font-family monorobot
+  font-size 20px
+  font-weight 700
+  line-height 26px
+  color purpy
+  text-transform uppercase
+  & span 
+    &:after
+      content '\000a0'
+
+.sign-in-modal-content
+  display: block
+  width 100%
+  max-width 367px
+  margin 0 auto
+
+.sign-in-buttons
+  display: block
+
+.sign-in-buttons__facebook
+  width 100%
+  max-width 367px
+  height 65px
+  margin 0 0 30px
+  padding 0
+  background-color transparent
+  background-image url('../img/icons/facebook-sign-in-button.svg')
+  background-repeat no-repeat
+  background-position: 0 0
+  background-size contain
+  cursor pointer
+  transition all .2s ease
+  &:hover
+  &:focus
+    transform scale(1.1)
+
+.sign-in-buttons__gplus
+  width 100%
+  max-width 367px
+  height 65px
+  margin 0 0 30px
+  padding 0
+  background-color transparent
+  background-image url('../img/icons/gplus-sign-in-button.svg')
+  background-repeat no-repeat
+  background-position: 0 0
+  background-size contain
+  cursor pointer
+  transition all .2s ease
+  &:hover
+  &:focus
+    transform scale(1.1)
+
+.sign-in-buttons__twitter
+  width 100%
+  max-width 367px
+  height 65px
+  margin 0 0 30px
+  padding 0
+  background-color transparent
+  background-image url('../img/icons/twitter-sign-in-button.svg')
+  background-repeat no-repeat
+  background-position: 0 0
+  background-size contain
+  cursor pointer
+  transition all .2s ease
+  &:hover
+  &:focus
+    transform scale(1.1)
+
+
+.share-block
+  display block
+  width 100%
+  max-width 400px
+  padding 18px 22px
+  border 2px solid #D8D8D8

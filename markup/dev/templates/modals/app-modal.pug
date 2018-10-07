@@ -1,0 +1,21 @@
+//- APP MODAL
+//- templates/modals/app-modal.pug
+.app-modal.modal
+  .modal-head
+    .modal-head__title.modal-head__title_app Qfer
+    .modal-close
+  .modal-content
+    .app-modal-content
+      .app-modal-content__app-links
+        .app-card__icon
+          img(src='assets/img/apps/app-icon-4.png')
+        a.app-link-appstore(href='#')
+        a.app-link-gplay(href='#')
+      .app-modal-content__description
+        .modal-heading QFer — заказывай еду, получай бонусы
+        .modal-text Qfer поможет заказать обед или ужин из ресторанов и получать бонусы (предложения и кешбэк). Экономь время и деньги вместе с Qfer. Получай специальные предложения от таких брендов как Lulū, KFC, Lido, Čili Pica, Pizza Hut, Subburger и многих других.
+        .app-modal-bottom
+          a.app-modal-bottom__choose.modal-opener(role='button' data-modal='thank-you') Choose
+          .app-modal-bottom__votes
+            span 217
+            | votes
