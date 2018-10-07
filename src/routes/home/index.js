@@ -1,6 +1,8 @@
 import { h, Component } from 'preact';
 import config from '../../configs/firebase';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/database';
+import 'firebase/auth';
 
 const app = firebase.initializeApp(config);
 
@@ -72,7 +74,7 @@ class Home extends Component {
 					</section>
 					<section class="nomination-section">
 						<h1 class="heading-h1">Category Best Design Award 2018</h1>
-						<div class="votes-counter"><span>217</span>votes</div>
+						<div class="votes-counter"><span>0</span>votes</div>
 						<div class="leaders-block">
 							<div class="leaders-block__title">Leaders</div>
 							<div class="leading-apps">
@@ -81,8 +83,8 @@ class Home extends Component {
 										<div class="app-card__content">
 											<div class="app-card__icon"><img src={item.icon} /></div>
 											<div class="app-card__name"><span>{item.name}</span></div>
-											<div class="app-card__votes"><span>145</span>votes</div>
-											<a class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
+											<div class="app-card__votes"><span>0</span>votes</div>
+											<a href="#" class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
 										</div>
 									</div>
 								))}
@@ -91,7 +93,7 @@ class Home extends Component {
 					</section>
 					<section class="nomination-section">
 						<h1 class="heading-h1">Category Best Features Award 2018</h1>
-						<div class="votes-counter"><span>345</span>votes</div>
+						<div class="votes-counter"><span>0</span>votes</div>
 						<div class="leaders-block">
 							<div class="leaders-block__title">Leaders</div>
 							<div class="leading-apps">
@@ -100,8 +102,8 @@ class Home extends Component {
 										<div class="app-card__content">
 											<div class="app-card__icon"><img src={item.icon} /></div>
 											<div class="app-card__name"><span>{item.name}</span></div>
-											<div class="app-card__votes"><span>145</span>votes</div>
-											<a class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
+											<div class="app-card__votes"><span>0</span>votes</div>
+											<a href="#" class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
 										</div>
 									</div>
 								))}
@@ -110,7 +112,7 @@ class Home extends Component {
 					</section>
 					<section class="nomination-section">
 						<h1 class="heading-h1">Category Best Indie App Award 2018</h1>
-						<div class="votes-counter"><span>407</span>votes</div>
+						<div class="votes-counter"><span>0</span>votes</div>
 						<div class="leaders-block">
 							<div class="leaders-block__title">Leaders</div>
 							<div class="leading-apps">
@@ -119,8 +121,8 @@ class Home extends Component {
 										<div class="app-card__content">
 											<div class="app-card__icon"><img src={item.icon} /></div>
 											<div class="app-card__name"><span>{item.name}</span></div>
-											<div class="app-card__votes"><span>145</span>votes</div>
-											<a class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
+											<div class="app-card__votes"><span>0</span>votes</div>
+											<a href="#" class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
 										</div>
 									</div>
 								))}

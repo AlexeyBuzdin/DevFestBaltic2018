@@ -1,8 +1,8 @@
 export default {
 	apiKey: '',
-	authDomain: '',
-	databaseURL: 'https://devfest-6b47b.firebaseio.com/',
-	projectId: 'devfest-6b47b',
-	storageBucket: '',
-	messagingSenderId: ''
+	authDomain: 'best-app-awards.firebaseapp.com',
+	databaseURL: 'https://best-app-awards.firebaseio.com',
+	projectId: 'best-app-awards',
+	storageBucket: 'best-app-awards.appspot.com',
+	messagingSenderId: '1090079449159'
 };
