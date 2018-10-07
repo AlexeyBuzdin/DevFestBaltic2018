@@ -39,22 +39,21 @@ class Home extends Component {
 		this.state = {
 			slug: null,
 			showLogin: false,
-			bestDesign: [],
-			bestFeatures: [],
-			bestIndie: []
+			apps: [],
+			selectedApp: null
 		};
 		const ref = app.database().ref().child('/');
 		ref.on('value', (snapshot) => {
 			snapshot.forEach((childSnapshot) => {
-				if (['bestDesign', 'bestFeatures', 'bestIndie'].includes(childSnapshot.key)) {
-					this.setState({ [childSnapshot.key]: Object.values(childSnapshot.val()) });
+				if (childSnapshot.key === 'apps') {
+					this.setState({ apps: Object.values(childSnapshot.val()) });
 				}
 			  });
 		});
 	}
 	
 	render() {
-		const { showLogin, bestDesign, bestFeatures, bestIndie } = this.state;
+		const { showLogin, selectedApp, apps } = this.state;
 		return (
 			<div>
 				<header class="header">
@@ -78,7 +77,7 @@ class Home extends Component {
 						<div class="leaders-block">
 							<div class="leaders-block__title">Leaders</div>
 							<div class="leading-apps">
-								{bestDesign.map(item => (
+								{apps.filter(app => app.design).map(item => (
 									<div class="app-card">
 										<div class="app-card__content">
 											<div class="app-card__icon"><img src={item.icon} /></div>
@@ -97,7 +96,7 @@ class Home extends Component {
 						<div class="leaders-block">
 							<div class="leaders-block__title">Leaders</div>
 							<div class="leading-apps">
-								{bestFeatures.map(item => (
+								{apps.filter(app => app.features).map(item => (
 									<div class="app-card">
 										<div class="app-card__content">
 											<div class="app-card__icon"><img src={item.icon} /></div>
@@ -116,7 +115,7 @@ class Home extends Component {
 						<div class="leaders-block">
 							<div class="leaders-block__title">Leaders</div>
 							<div class="leading-apps">
-								{bestIndie.map(item => (
+								{apps.filter(app => app.indie).map(item => (
 									<div class="app-card">
 										<div class="app-card__content">
 											<div class="app-card__icon"><img src={item.icon} /></div>
@@ -154,26 +153,28 @@ class Home extends Component {
 					</footer>
 				</div>
 				<div class={this.getModalContainerClass}>
-					<div class="app-modal modal">
-						<div class="modal-head">
-							<div class="modal-head__title modal-head__title_app">Qfer</div>
-							<div class="modal-close" />
-						</div>
-						<div class="modal-content">
-							<div class="app-modal-content">
-								<div class="app-modal-content__app-links">
-									<div class="app-card__icon"><img src="assets/img/apps/app-icon-4.png" /></div><a class="app-link-appstore" href="#" /><a class="app-link-gplay" href="#" />
-								</div>
-								<div class="app-modal-content__description">
-									<div class="modal-heading">QFer — заказывай еду, получай бонусы</div>
-									<div class="modal-text">Qfer поможет заказать обед или ужин из ресторанов и получать бонусы (предложения и кешбэк). Экономь время и деньги вместе с Qfer. Получай специальные предложения от таких брендов как Lulū, KFC, Lido, Čili Pica, Pizza Hut, Subburger и многих других.</div>
-									<div class="app-modal-bottom"><a class="app-modal-bottom__choose modal-opener" role="button" data-modal="thank-you">Choose</a>
-										<div class="app-modal-bottom__votes"><span>217</span>votes</div>
+					{selectedApp && (
+						<div class="app-modal modal">
+							<div class="modal-head">
+								<div class="modal-head__title modal-head__title_app">Qfer</div>
+								<div class="modal-close" />
+							</div>
+							<div class="modal-content">
+								<div class="app-modal-content">
+									<div class="app-modal-content__app-links">
+										<div class="app-card__icon"><img src="assets/img/apps/app-icon-4.png" /></div><a class="app-link-appstore" href="#" /><a class="app-link-gplay" href="#" />
+									</div>
+									<div class="app-modal-content__description">
+										<div class="modal-heading">QFer — заказывай еду, получай бонусы</div>
+										<div class="modal-text">Qfer поможет заказать обед или ужин из ресторанов и получать бонусы (предложения и кешбэк). Экономь время и деньги вместе с Qfer. Получай специальные предложения от таких брендов как Lulū, KFC, Lido, Čili Pica, Pizza Hut, Subburger и многих других.</div>
+										<div class="app-modal-bottom"><a class="app-modal-bottom__choose modal-opener" role="button" data-modal="thank-you">Choose</a>
+											<div class="app-modal-bottom__votes"><span>217</span>votes</div>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-					</div>
+					)}
 					
 					{showLogin && (
 						<div class="sign-in-modal modal modal_visible">
