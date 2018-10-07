@@ -8,6 +8,17 @@ const app = firebase.initializeApp(config);
 
 class Home extends Component {
 
+	getAvatarStyle = () => {
+		const { user } = this.state;
+		if (user) {
+			return {
+				backgroundImage: `url(${user.photoURL})`
+			};
+		}
+
+		return {};
+	}
+	
 	getModalContainerClass = () => {
 		if (this.state.showLogin || this.state.selectedApp) {
 			return 'modal-container modal-container_visible';
@@ -42,11 +53,9 @@ class Home extends Component {
 
 	handleSocialLogin = (e, provider) => {
 		e.preventDefault();
+		const that = this;
 		firebase.auth().signInWithPopup(provider).then((result) => {
-			let token = result.credential.accessToken;
-			let user = result.user;
-		
-			console.log(token, user);
+			that.setState({ user: result.user, showLogin: false });
 		  }).catch((error) => {
 			console.dir(error);
 		  });
@@ -58,7 +67,8 @@ class Home extends Component {
 			slug: null,
 			showLogin: false,
 			apps: [],
-			selectedApp: null
+			selectedApp: null,
+			user: null
 		};
 		const ref = app.database().ref().child('/');
 		ref.on('value', (snapshot) => {
@@ -71,15 +81,24 @@ class Home extends Component {
 	}
 	
 	render() {
-		const { showLogin, selectedApp, apps } = this.state;
+		const { showLogin, selectedApp, apps, user } = this.state;
 		return (
 			<div>
 				<header class="header">
 					<div class="nominate-the-app-button">Nominate the app</div><a class="see-the-prizes" href="#">See the prizes</a>
 					<div class="header-login-block">
 						<div class="header-login-block__avatar-container">
-							<div class="header-login-block__avatar" />
-						</div><a class="header-login-block__sign-in-and-out modal-opener" role="button" onClick={this.handleSignInOpen}>Sign in</a>
+							<div class="header-login-block__avatar" style={this.getAvatarStyle()} />
+						</div>
+						{user ? (
+							<a href="#" class="header-login-block__sign-in-and-out modal-opener" role="button" onClick={e => {
+								e.preventDefault();
+								this.setState({ user: null });
+							}}
+							>Sign out</a>
+						) : (
+							<a href="#" class="header-login-block__sign-in-and-out modal-opener" role="button" onClick={this.handleSignInOpen}>Sign in</a>
+						)}
 					</div>
 				</header>
 				<div class={this.getPageWrapperClass()}>
