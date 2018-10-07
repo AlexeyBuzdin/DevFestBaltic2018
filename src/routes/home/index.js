@@ -1,4 +1,8 @@
 import { h, Component } from 'preact';
+import config from '../../configs/firebase';
+import firebase from 'firebase';
+
+const app = firebase.initializeApp(config);
 
 class Home extends Component {
 
@@ -32,12 +36,23 @@ class Home extends Component {
 		super(props);
 		this.state = {
 			slug: null,
-			showLogin: false
+			showLogin: false,
+			bestDesign: [],
+			bestFeatures: [],
+			bestIndie: []
 		};
+		const ref = app.database().ref().child('/');
+		ref.on('value', (snapshot) => {
+			snapshot.forEach((childSnapshot) => {
+				if (['bestDesign', 'bestFeatures', 'bestIndie'].includes(childSnapshot.key)) {
+					this.setState({ [childSnapshot.key]: Object.values(childSnapshot.val()) });
+				}
+			  });
+		});
 	}
 	
 	render() {
-		const { showLogin } = this.state;
+		const { showLogin, bestDesign, bestFeatures, bestIndie } = this.state;
 		return (
 			<div>
 				<header class="header">
@@ -61,34 +76,16 @@ class Home extends Component {
 						<div class="leaders-block">
 							<div class="leaders-block__title">Leaders</div>
 							<div class="leading-apps">
-								<div class="app-card">
-									<div class="app-card__content">
-										<div class="app-card__icon"><img src="assets/img/apps/app-icon-1.png" /></div>
-										<div class="app-card__name"><span>Citadele App</span></div>
-										<div class="app-card__votes"><span>145</span>votes</div><a class="app-card__engage-button app-card__engage-button_your-choice modal-opener" role="button" data-modal="app">Your choice</a>
+								{bestDesign.map(item => (
+									<div class="app-card">
+										<div class="app-card__content">
+											<div class="app-card__icon"><img src={item.icon} /></div>
+											<div class="app-card__name"><span>{item.name}</span></div>
+											<div class="app-card__votes"><span>145</span>votes</div>
+											<a class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
+										</div>
 									</div>
-								</div>
-								<div class="app-card">
-									<div class="app-card__content">
-										<div class="app-card__icon"><img src="assets/img/apps/app-icon-2.png" /></div>
-										<div class="app-card__name"><span>Taxify</span></div>
-										<div class="app-card__votes"><span>145</span>votes</div><a class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
-									</div>
-								</div>
-								<div class="app-card">
-									<div class="app-card__content">
-										<div class="app-card__icon"><img src="assets/img/apps/app-icon-3.png" /></div>
-										<div class="app-card__name"><span>Fabula</span></div>
-										<div class="app-card__votes"><span>145</span>votes</div><a class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
-									</div>
-								</div>
-								<div class="app-card">
-									<div class="app-card__content">
-										<div class="app-card__icon"><img src="assets/img/apps/app-icon-4.png" /></div>
-										<div class="app-card__name"><span>Qfer</span></div>
-										<div class="app-card__votes"><span>145</span>votes</div><a class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
-									</div>
-								</div>
+								))}
 							</div>
 						</div><a class="view-all-link" href="#">View All<span>54</span>Nominates</a>
 					</section>
@@ -98,34 +95,16 @@ class Home extends Component {
 						<div class="leaders-block">
 							<div class="leaders-block__title">Leaders</div>
 							<div class="leading-apps">
-								<div class="app-card">
-									<div class="app-card__content">
-										<div class="app-card__icon"><img src="assets/img/apps/app-icon-1.png" /></div>
-										<div class="app-card__name"><span>Citadele App</span></div>
-										<div class="app-card__votes"><span>145</span>votes</div><a class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
+								{bestFeatures.map(item => (
+									<div class="app-card">
+										<div class="app-card__content">
+											<div class="app-card__icon"><img src={item.icon} /></div>
+											<div class="app-card__name"><span>{item.name}</span></div>
+											<div class="app-card__votes"><span>145</span>votes</div>
+											<a class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
+										</div>
 									</div>
-								</div>
-								<div class="app-card">
-									<div class="app-card__content">
-										<div class="app-card__icon"><img src="assets/img/apps/app-icon-2.png" /></div>
-										<div class="app-card__name"><span>Taxify</span></div>
-										<div class="app-card__votes"><span>145</span>votes</div><a class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
-									</div>
-								</div>
-								<div class="app-card">
-									<div class="app-card__content">
-										<div class="app-card__icon"><img src="assets/img/apps/app-icon-3.png" /></div>
-										<div class="app-card__name"><span>Fabula</span></div>
-										<div class="app-card__votes"><span>145</span>votes</div><a class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
-									</div>
-								</div>
-								<div class="app-card">
-									<div class="app-card__content">
-										<div class="app-card__icon"><img src="assets/img/apps/app-icon-4.png" /></div>
-										<div class="app-card__name"><span>Qfer</span></div>
-										<div class="app-card__votes"><span>145</span>votes</div><a class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
-									</div>
-								</div>
+								))}
 							</div>
 						</div><a class="view-all-link" href="#">View All<span>18</span>Nominates</a>
 					</section>
@@ -135,34 +114,16 @@ class Home extends Component {
 						<div class="leaders-block">
 							<div class="leaders-block__title">Leaders</div>
 							<div class="leading-apps">
-								<div class="app-card">
-									<div class="app-card__content">
-										<div class="app-card__icon"><img src="assets/img/apps/app-icon-1.png" /></div>
-										<div class="app-card__name"><span>Citadele App</span></div>
-										<div class="app-card__votes"><span>256</span>votes</div><a class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
+								{bestIndie.map(item => (
+									<div class="app-card">
+										<div class="app-card__content">
+											<div class="app-card__icon"><img src={item.icon} /></div>
+											<div class="app-card__name"><span>{item.name}</span></div>
+											<div class="app-card__votes"><span>145</span>votes</div>
+											<a class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
+										</div>
 									</div>
-								</div>
-								<div class="app-card">
-									<div class="app-card__content">
-										<div class="app-card__icon"><img src="assets/img/apps/app-icon-2.png" /></div>
-										<div class="app-card__name"><span>Taxify</span></div>
-										<div class="app-card__votes"><span>13</span>votes</div><a class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
-									</div>
-								</div>
-								<div class="app-card">
-									<div class="app-card__content">
-										<div class="app-card__icon"><img src="assets/img/apps/app-icon-3.png" /></div>
-										<div class="app-card__name"><span>Fabula</span></div>
-										<div class="app-card__votes"><span>127</span>votes</div><a class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
-									</div>
-								</div>
-								<div class="app-card">
-									<div class="app-card__content">
-										<div class="app-card__icon"><img src="assets/img/apps/app-icon-4.png" /></div>
-										<div class="app-card__name"><span>Qfer</span></div>
-										<div class="app-card__votes"><span>190</span>votes</div><a class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
-									</div>
-								</div>
+								))}
 							</div>
 						</div><a class="view-all-link" href="#">View All<span>42</span>Nominates</a>
 					</section>
