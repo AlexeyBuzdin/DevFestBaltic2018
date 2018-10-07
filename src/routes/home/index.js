@@ -9,14 +9,14 @@ const app = firebase.initializeApp(config);
 class Home extends Component {
 
 	getModalContainerClass = () => {
-		if (this.state.showLogin) {
+		if (this.state.showLogin || this.state.selectedApp) {
 			return 'modal-container modal-container_visible';
 		}
 		return 'modal-container';
 	}
 
 	getPageWrapperClass = () => {
-		if (this.state.showLogin) {
+		if (this.state.showLogin || this.state.selectedApp) {
 			return 'page-wrapper page-wrapper_blur';
 		}
 		return 'page-wrapper';
@@ -28,10 +28,16 @@ class Home extends Component {
 		document.body.classList.add('body-no-scroll');
 	}
 
-	handleSignInClose = (e) => {
+	handleCloseModal = (e) => {
 		e.preventDefault();
-		this.setState({ showLogin: false });
+		this.setState({ showLogin: false, selectedApp: null });
 		document.body.classList.remove('body-no-scroll');
+	}
+
+	handleChoose = (e, selectedApp) => {
+		e.preventDefault();
+		this.setState({ selectedApp });
+		document.body.classList.add('body-no-scroll');
 	}
 
 	constructor(props) {
@@ -64,7 +70,7 @@ class Home extends Component {
 						</div><a class="header-login-block__sign-in-and-out modal-opener" role="button" onClick={this.handleSignInOpen}>Sign in</a>
 					</div>
 				</header>
-				<div class={this.getPageWrapperClass}>
+				<div class={this.getPageWrapperClass()}>
 					<section class="prize-disclaimer">
 						<div class="prize-info-block">
 							<div class="prize-info-block__title">Choose the app in each category and win a XIAMOMI MI BAND 3 BLACK</div>
@@ -83,7 +89,7 @@ class Home extends Component {
 											<div class="app-card__icon"><img src={item.icon} /></div>
 											<div class="app-card__name"><span>{item.name}</span></div>
 											<div class="app-card__votes"><span>0</span>votes</div>
-											<a href="#" class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
+											<a href="#" class="app-card__engage-button modal-opener" role="button" onClick={e => this.handleChoose(e, item)}>Choose</a>
 										</div>
 									</div>
 								))}
@@ -102,7 +108,7 @@ class Home extends Component {
 											<div class="app-card__icon"><img src={item.icon} /></div>
 											<div class="app-card__name"><span>{item.name}</span></div>
 											<div class="app-card__votes"><span>0</span>votes</div>
-											<a href="#" class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
+											<a href="#" class="app-card__engage-button modal-opener" role="button" onClick={e => this.handleChoose(e, item)}>Choose</a>
 										</div>
 									</div>
 								))}
@@ -121,7 +127,7 @@ class Home extends Component {
 											<div class="app-card__icon"><img src={item.icon} /></div>
 											<div class="app-card__name"><span>{item.name}</span></div>
 											<div class="app-card__votes"><span>0</span>votes</div>
-											<a href="#" class="app-card__engage-button modal-opener" role="button" data-modal="app">Choose</a>
+											<a href="#" class="app-card__engage-button modal-opener" role="button" onClick={e => this.handleChoose(e, item)}>Choose</a>
 										</div>
 									</div>
 								))}
@@ -152,23 +158,26 @@ class Home extends Component {
 						<div class="footer-copyright">&copy;2018</div>
 					</footer>
 				</div>
-				<div class={this.getModalContainerClass}>
+				<div class={this.getModalContainerClass()}>
 					{selectedApp && (
-						<div class="app-modal modal">
+						<div class="app-modal modal modal_visible">
 							<div class="modal-head">
-								<div class="modal-head__title modal-head__title_app">Qfer</div>
-								<div class="modal-close" />
+								<div class="modal-head__title modal-head__title_app">{selectedApp.name}</div>
+								<div class="modal-close" onClick={this.handleCloseModal} />
 							</div>
 							<div class="modal-content">
 								<div class="app-modal-content">
 									<div class="app-modal-content__app-links">
-										<div class="app-card__icon"><img src="assets/img/apps/app-icon-4.png" /></div><a class="app-link-appstore" href="#" /><a class="app-link-gplay" href="#" />
+										<div class="app-card__icon"><img src={selectedApp.icon} /></div>
+										{selectedApp.apple_url && <a class="app-link-appstore" href={selectedApp.apple_url} target="_blank" />}
+										{selectedApp.google_url && <a class="app-link-gplay" href={selectedApp.google_url} target="_blank" />}
 									</div>
 									<div class="app-modal-content__description">
-										<div class="modal-heading">QFer — заказывай еду, получай бонусы</div>
-										<div class="modal-text">Qfer поможет заказать обед или ужин из ресторанов и получать бонусы (предложения и кешбэк). Экономь время и деньги вместе с Qfer. Получай специальные предложения от таких брендов как Lulū, KFC, Lido, Čili Pica, Pizza Hut, Subburger и многих других.</div>
-										<div class="app-modal-bottom"><a class="app-modal-bottom__choose modal-opener" role="button" data-modal="thank-you">Choose</a>
-											<div class="app-modal-bottom__votes"><span>217</span>votes</div>
+										<div class="modal-heading">{selectedApp.title}</div>
+										<div class="modal-text">{selectedApp.description}</div>
+										<div class="app-modal-bottom">
+											<a class="app-modal-bottom__choose modal-opener" role="button" data-modal="thank-you">Choose</a>
+											<div class="app-modal-bottom__votes"><span>0</span>votes</div>
 										</div>
 									</div>
 								</div>
@@ -180,7 +189,7 @@ class Home extends Component {
 						<div class="sign-in-modal modal modal_visible">
 							<div class="modal-head">
 								<div class="modal-head__title">Sign In With Social Network</div>
-								<div class="modal-close"  onClick={this.handleSignInClose} />
+								<div class="modal-close"  onClick={this.handleCloseModal} />
 							</div>
 							<div class="modal-content">
 								<div class="sign-in-modal-content">
