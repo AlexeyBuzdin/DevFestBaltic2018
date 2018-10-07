@@ -40,6 +40,18 @@ class Home extends Component {
 		document.body.classList.add('body-no-scroll');
 	}
 
+	handleSocialLogin = (e, provider) => {
+		e.preventDefault();
+		firebase.auth().signInWithPopup(provider).then((result) => {
+			let token = result.credential.accessToken;
+			let user = result.user;
+		
+			console.log(token, user);
+		  }).catch((error) => {
+			console.dir(error);
+		  });
+	}
+
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -196,8 +208,8 @@ class Home extends Component {
 									<div class="modal-heading">Please Sign in for voting</div>
 									<div class="modal-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
 									<div class="sign-in-buttons">
-										<div class="sign-in-buttons__facebook" />
-										<div class="sign-in-buttons__gplus" />
+										<div class="sign-in-buttons__facebook" onClick={e => this.handleSocialLogin(e, new firebase.auth.FacebookAuthProvider())} />
+										<div class="sign-in-buttons__gplus" onClick={e => this.handleSocialLogin(e, new firebase.auth.GoogleAuthProvider())} />
 										<div class="sign-in-buttons__twitter" />
 									</div>
 								</div>
