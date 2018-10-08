@@ -11,18 +11,38 @@
   align-content flex-start
   justify-content: flex-start
   width 100%
-  max-width 1440px
   height auto
   margin 0 auto
   padding 0
+  background-color purpy
   border-bottom 3px solid #CD75C2
-  @media (min-width 1441px)
-    border-right 3px solid #CD75C2
-    border-left 3px solid #cd75c2
+  overflow: hidden
+  position fixed
+  top 0
+  left 0
+  z-index 10
+  @media (max-width 767px)
+    display: block
+    width 190px
+    height 100%
+    min-height 100vh
+    padding 56px 15px 99px
+    background: #9C27B0;
+    box-shadow: 0 2px 6px 0 rgba(0,0,0,0.50)
+    left -210px
+    z-index 10
+    overflow-x scroll
+    -webkit-overflow-scrolling: touch
+    transition all .3s ease-out
+
+.header_opened
+  @media (max-width 767px)
+    left 0
 
 .nominate-the-app-button
   display: block
   width 285px
+  flex-shrink 0
   height 65px
   border-right 3px solid #CD75C2
   background-color pinkerton 
@@ -34,6 +54,21 @@
   text-align center
   text-transform uppercase
   cursor pointer
+  &:hover
+  &:focus
+    color purpy
+    background-color #fff
+  @media (max-width 767px)
+    width 87px
+    height 54px
+    margin 0 0 19px
+    border none
+    font-size 18px
+    line-height 27px
+    font-weight normal
+    color #FFC6D5
+    text-align left
+    background-color transparent
 
 .see-the-prizes
   display: block
@@ -46,7 +81,17 @@
   color pinky
   text-decoration underline
   cursor pointer
-
+  &:hover
+  &:focus
+    color #fff
+  @media (max-width 767px)
+    padding 0
+    font-weight normal
+    line-height 27px
+    text-transform uppercase
+    text-decoration none
+    & span 
+      display: none
 
 // LOGIN BLOCK
 .header-login-block
@@ -60,14 +105,24 @@
   width 206px
   height 65px
   margin 0 0 0 auto
+  @media (max-width 767px)
+    flex-wrap wrap
+    flex-flow row wrap
 
 .header-login-block__avatar-container
+  order 1
   display: block
   width 71px
   height 65px
   padding 13px 0
   border-left 3px solid #cd75c2
   border-right 3px solid #cd75c2
+  @media (max-width 767px)
+    order 2
+    border none
+    width auto
+    height auto
+    padding 0
 
 .header-login-block__avatar
   display: block
@@ -81,8 +136,17 @@
   background-repeat no-repeat
   background-size 16px auto
   background-position 50% 50%
+  overflow hidden
+  & img
+    display: block
+    height 100%
+    min-height 100%
+    max-height 100%
+    margin 0 auto
+    width auto
 
 .header-login-block__sign-in-and-out
+  order 2
   display: block
   width 135px
   height 65px
@@ -95,3 +159,45 @@
   text-decoration underline
   cursor pointer
   text-align center
+  &:hover
+  &:focus
+    color #fff
+  @media (max-width 767px)
+    order 1
+    width 100%
+    flex-basis 100%
+    height auto
+    margin 0 0 19px
+    font-weight normal
+    font-size 18px
+    line-height 27px
+    text-align left
+    text-decoration none
+
+// MOBILE NAVIGATION
+.mobile-nav
+  display: none
+  @media (max-width 767px)
+    display: block
+    margin 35px 0
+
+.mobile-nav__title
+  display: block
+  margin 0 0 14px
+  font-family monorobot
+  font-size 14px
+  line-height 27px
+  font-weight normal
+  color #ffffff
+
+.mobile-nav__item
+  display: block
+  margin 0 0 19px
+  font-family monorobot
+  font-size 18px
+  line-height 27px
+  font-weight normal
+  color #FFC6D5
+  text-transform uppercase
+  &:last-child
+    margin 0

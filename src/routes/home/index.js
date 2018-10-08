@@ -85,7 +85,13 @@ class Home extends Component {
 		return (
 			<div>
 				<header class="header">
-					<div class="nominate-the-app-button">Nominate the app</div><a class="see-the-prizes" href="#">See the prizes</a>
+					<div class="nominate-the-app-button">Nominate the app</div><a class="see-the-prizes" href="#"><span>See the </span>prizes</a>
+					<div class="mobile-nav">
+						<div class="mobile-nav__title">Categories:</div>
+						<div class="mobile-nav__item">Best design award 2018</div>
+						<div class="mobile-nav__item">Best features award 2018</div>
+						<div class="mobile-nav__item">Best indie app award 2018</div>
+					</div>
 					<div class="header-login-block">
 						<div class="header-login-block__avatar-container">
 							<div class="header-login-block__avatar" style={this.getAvatarStyle()} />
@@ -100,8 +106,10 @@ class Home extends Component {
 							<a href="#" class="header-login-block__sign-in-and-out modal-opener" role="button" onClick={this.handleSignInOpen}>Sign in</a>
 						)}
 					</div>
+          <a class="mobile-nav-closer" role="button"></a>
 				</header>
 				<div class={this.getPageWrapperClass()}>
+				  <a class="mobile-nav-opener" role="button"></a>
 					<section class="prize-disclaimer">
 						<div class="prize-info-block">
 							<div class="prize-info-block__title">Choose the app in each category and win a XIAMOMI MI BAND 3 BLACK</div>

@@ -2,8 +2,16 @@
 //- templates/header.pug
 header.header
   .nominate-the-app-button Nominate the app
-  a.see-the-prizes(href='#') See the prizes
+  a.see-the-prizes(href='#')
+    span See the 
+    | prizes
+  .mobile-nav
+    .mobile-nav__title Categories:
+    .mobile-nav__item Best design award 2018
+    .mobile-nav__item Best features award 2018
+    .mobile-nav__item Best indie app award 2018
   .header-login-block
     .header-login-block__avatar-container
       .header-login-block__avatar
     a.header-login-block__sign-in-and-out.modal-opener(role='button' data-modal='sign-in') Sign in
+  a.mobile-nav-closer(role='button')
