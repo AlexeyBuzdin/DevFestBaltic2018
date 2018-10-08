@@ -95,7 +95,7 @@ body
   width 100%
   min-height 100%
   height auto
-  background-color purpy
+  background-color transparent
   font-family: -apple-system, Arial, sans-serif
   font-size 18px
   line-height: 1.6
@@ -116,7 +116,6 @@ body
 .page-wrapper
   display block
   width: 100%
-  max-width 1440px
   min-width: 320px
   height auto
   min-height 100vh
@@ -124,7 +123,9 @@ body
   padding: 0
   overflow: hidden
   position: relative
-
+  background-color purpy
+  &_prizes
+    background-color #E1F5FE
 
 @import typography
 @import header
@@ -413,6 +414,120 @@ body
     top 51px
     right 0
     z-index 1
+
+
+// *******************
+// PRIZES PAGE CONTENT
+// *******************
+.prizes-page-section
+  display: block
+  width 100%
+  max-width 1176px
+  height auto
+  margin 0 auto
+  padding 120px 12px 180px
+  @media (max-width 767px)
+    padding 52px 12px 10px
+
+.back-to-nominates
+  display: inline-block
+  width auto
+  height 24px
+  margin 0 0 77px
+  padding 0 0 0 22px
+  background-color transparent
+  background-image url('../img/icons/arrow-left-blue.svg')
+  background-repeat no-repeat
+  background-size 15px auto
+  background-position 0 4px
+  font-family monorobot
+  font-size 18px
+  font-weight 500
+  line-height 24px
+  color #73B2E4
+  text-decoration underline
+  &:hover
+  &:focus
+    color purpy
+  @media (max-width 767px)
+    margin 0 0 98px
+
+.prizes-page-content
+  display: flex
+  flex-direction row
+  flex-wrap nowrap
+  flex-flow row nowrap
+  align-items flex-start
+  align-content flex-start
+  justify-content space-between
+  width calc(100% / 12 * 11)
+  flex-basis calc(100% / 12 * 11)
+  margin 0 0 60px
+  @media (max-width 767px)
+    display: block
+    width 100%
+
+.prizes-page-content__image-container
+  display: block
+  width calc((100% + 24px) / 2)
+  flex-basis calc((100% + 24px) / 2)
+  flex-shrink 0
+  flex-grow 0
+  & img 
+    display: block
+    width 100%
+    height auto
+    max-width 100%
+    max-height 100%
+    margin 0
+    padding 0
+  @media (max-width 767px)
+    display: none
+
+.prizes-page-content__text-block
+  display: block
+  width calc((100% + 24px) / 12 * 4)
+  flex-basis calc((100% + 24px) / 12 * 4)
+  flex-shrink 0
+  flex-grow 0
+  @media (max-width 767px)
+    width 100%
+
+
+.prizes-page-content__heading
+  display block
+  margin 0 0 19px
+  font-family: monorobot
+  font-size 24px
+  font-weight: 500
+  line-height 32px
+  color #73B2E4
+  text-decoration underline
+
+.prizes-page-content__inside-text-image
+  display: none
+  width calc(100% + 24px)
+  margin 0 -12px 40px
+  & img 
+    display: block
+    width 100%
+    height auto
+    max-width 100%
+    max-height 100%
+    margin 0
+    padding 0
+  @media (max-width 767px)
+    display: block
+
+.prizes-page-content__text
+  display block
+  margin 0 0 18px
+  font-family: robot
+  font-size 18px
+  font-weight: normal
+  line-height 27px
+  color #73B2E4
+
 
 // ******************
 // VISIBILITY CLASSES
