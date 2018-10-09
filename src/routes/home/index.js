@@ -7,17 +7,6 @@ import 'firebase/auth';
 const app = firebase.initializeApp(config);
 
 class Home extends Component {
-
-	getAvatarStyle = () => {
-		const { user } = this.state;
-		if (user) {
-			return {
-				backgroundImage: `url(${user.photoURL})`
-			};
-		}
-
-		return {};
-	}
 	
 	getModalContainerClass = () => {
 		if (this.state.showLogin || this.state.selectedApp) {
@@ -56,9 +45,22 @@ class Home extends Component {
 		const that = this;
 		firebase.auth().signInWithPopup(provider).then((result) => {
 			that.setState({ user: result.user, showLogin: false });
+			window.localStorage.setItem('user', JSON.stringify(result.user));
 		  }).catch((error) => {
 			console.dir(error);
 		  });
+	}
+
+	handleSendEmail = (e) => {
+		e.preventDefault();
+		const { email } = this.state;
+		const newEmailKey = firebase.database().ref().child('emails').push().key;
+		let updates = {};
+		updates['/emails/' + newEmailKey] = { email };
+		firebase.database().ref().update(updates).then(() => {
+			alert('Thank you!');
+			this.setState({ email: null });
+		});
 	}
 
 	constructor(props) {
@@ -68,20 +70,35 @@ class Home extends Component {
 			showLogin: false,
 			apps: [],
 			selectedApp: null,
-			user: null
+			user: window.localStorage.getItem('user') ? JSON.parse(window.localStorage.getItem('user')) : null,
+			showAllDesigns: false,
+			showAllFeatures: false,
+			showAllIndies: false,
+			email: null
 		};
-		const ref = app.database().ref().child('/');
+		const ref = app.database().ref('apps');
 		ref.on('value', (snapshot) => {
+			let items = [];
 			snapshot.forEach((childSnapshot) => {
-				if (childSnapshot.key === 'apps') {
-					this.setState({ apps: Object.values(childSnapshot.val()) });
-				}
-			  });
+				items.push(childSnapshot.val());
+			});
+			this.setState({ apps: items });
+		}, (err) => {
+			console.log(err);
 		});
 	}
 	
 	render() {
-		const { showLogin, selectedApp, apps, user } = this.state;
+		const { showLogin, selectedApp, apps, user, showAllDesigns, showAllFeatures, showAllIndies, email } = this.state;
+
+		// TODO: to do this much better %)
+		const designsApps = apps.filter(app => app.design);
+		const slicedDesignsApps = apps.filter(app => app.design).splice(0, 4);
+		const featuresApps = apps.filter(app => app.features);
+		const slicedFeaturesApps = apps.filter(app => app.features).splice(0, 4);
+		const indiesApps = apps.filter(app => app.indie);
+		const slicedIndiesApps = apps.filter(app => app.indie).splice(0, 4);
+
 		return (
 			<div>
 				<header class="header">
@@ -94,22 +111,35 @@ class Home extends Component {
 					</div>
 					<div class="header-login-block">
 						<div class="header-login-block__avatar-container">
-							<div class="header-login-block__avatar" style={this.getAvatarStyle()} />
+							<div class="header-login-block__avatar">
+								{user && <img src={user.photoURL} />}
+							</div>
 						</div>
 						{user ? (
 							<a href="#" class="header-login-block__sign-in-and-out modal-opener" role="button" onClick={e => {
 								e.preventDefault();
 								this.setState({ user: null });
+								window.localStorage.removeItem('user');
 							}}
 							>Sign out</a>
 						) : (
 							<a href="#" class="header-login-block__sign-in-and-out modal-opener" role="button" onClick={this.handleSignInOpen}>Sign in</a>
 						)}
 					</div>
-          <a class="mobile-nav-closer" role="button"></a>
+					<a href="#" class="mobile-nav-closer" role="button" onClick={e => {
+					  e.preventDefault();
+					  document.body.classList.remove('body-no-scroll');
+					  document.querySelector('.header').classList.remove('header_opened');
+				  }}
+					/>
 				</header>
 				<div class={this.getPageWrapperClass()}>
-				  <a class="mobile-nav-opener" role="button"></a>
+				  <a href="#" class="mobile-nav-opener" role="button" onClick={e => {
+					  e.preventDefault();
+					  document.body.classList.add('body-no-scroll');
+					  document.querySelector('.header').classList.add('header_opened');
+				  }}
+				  />
 					<section class="prize-disclaimer">
 						<div class="prize-info-block">
 							<div class="prize-info-block__title">Choose the app in each category and win a XIAMOMI MI BAND 3 BLACK</div>
@@ -122,18 +152,25 @@ class Home extends Component {
 						<div class="leaders-block">
 							<div class="leaders-block__title">Leaders</div>
 							<div class="leading-apps">
-								{apps.filter(app => app.design).map(item => (
-									<div class="app-card">
+								{(showAllDesigns ? designsApps : slicedDesignsApps).map(item => (
+									<div class="app-card" onClick={e => this.handleChoose(e, item)}>
 										<div class="app-card__content">
 											<div class="app-card__icon"><img src={item.icon} /></div>
 											<div class="app-card__name"><span>{item.name}</span></div>
 											<div class="app-card__votes"><span>0</span>votes</div>
-											<a href="#" class="app-card__engage-button modal-opener" role="button" onClick={e => this.handleChoose(e, item)}>Choose</a>
+											<a href="#" class="app-card__engage-button modal-opener" role="button">Choose</a>
 										</div>
 									</div>
 								))}
 							</div>
-						</div><a class="view-all-link" href="#">View All<span>54</span>Nominates</a>
+						</div>
+						{designsApps.length > 4 && !showAllDesigns && (
+							<a class="view-all-link" href="#" onClick={e => {
+								e.preventDefault();
+								this.setState({ showAllDesigns: true });
+							}}
+							>View All<span>{designsApps.length}</span>Nominates</a>
+						)}
 					</section>
 					<section class="nomination-section">
 						<h1 class="heading-h1">Category Best Features Award 2018</h1>
@@ -141,18 +178,25 @@ class Home extends Component {
 						<div class="leaders-block">
 							<div class="leaders-block__title">Leaders</div>
 							<div class="leading-apps">
-								{apps.filter(app => app.features).map(item => (
-									<div class="app-card">
+								{(showAllFeatures ? featuresApps : slicedFeaturesApps).map(item => (
+									<div class="app-card" onClick={e => this.handleChoose(e, item)}>
 										<div class="app-card__content">
 											<div class="app-card__icon"><img src={item.icon} /></div>
 											<div class="app-card__name"><span>{item.name}</span></div>
 											<div class="app-card__votes"><span>0</span>votes</div>
-											<a href="#" class="app-card__engage-button modal-opener" role="button" onClick={e => this.handleChoose(e, item)}>Choose</a>
+											<a href="#" class="app-card__engage-button modal-opener" role="button">Choose</a>
 										</div>
 									</div>
 								))}
 							</div>
-						</div><a class="view-all-link" href="#">View All<span>18</span>Nominates</a>
+						</div>
+						{featuresApps.length > 4 && !showAllFeatures && (
+							<a class="view-all-link" href="#" onClick={e => {
+								e.preventDefault();
+								this.setState({ showAllFeatures: true });
+							}}
+							>View All<span>{featuresApps.length}</span>Nominates</a>
+						)}
 					</section>
 					<section class="nomination-section">
 						<h1 class="heading-h1">Category Best Indie App Award 2018</h1>
@@ -160,24 +204,34 @@ class Home extends Component {
 						<div class="leaders-block">
 							<div class="leaders-block__title">Leaders</div>
 							<div class="leading-apps">
-								{apps.filter(app => app.indie).map(item => (
-									<div class="app-card">
+								{(showAllIndies ? indiesApps : slicedIndiesApps).map(item => (
+									<div class="app-card" onClick={e => this.handleChoose(e, item)}>
 										<div class="app-card__content">
 											<div class="app-card__icon"><img src={item.icon} /></div>
 											<div class="app-card__name"><span>{item.name}</span></div>
 											<div class="app-card__votes"><span>0</span>votes</div>
-											<a href="#" class="app-card__engage-button modal-opener" role="button" onClick={e => this.handleChoose(e, item)}>Choose</a>
+											<a href="#" class="app-card__engage-button modal-opener" role="button">Choose</a>
 										</div>
 									</div>
 								))}
 							</div>
-						</div><a class="view-all-link" href="#">View All<span>42</span>Nominates</a>
+						</div>
+						{indiesApps.length > 4 && !showAllIndies && (
+							<a class="view-all-link" href="#" onClick={e => {
+								e.preventDefault();
+								this.setState({ showAllIndies: true });
+							}}
+							>View All<span>{indiesApps.length}</span>Nominates</a>
+						)}
 					</section>
 					<footer class="footer">
 						<div class="footer-subscribe-block">
 							<div class="footer-subscribe-block__title">Subscribe for news</div>
-							<form class="footer-subscribe-block__form">
-								<input class="footer-subscribe-block__input" type="text" />
+							<form class="footer-subscribe-block__form" onSubmit={this.handleSendEmail}>
+								<input class="footer-subscribe-block__input" type="email" required value={email} onChange={e => {
+									this.setState({ email: e.target.value });
+								}}
+								/>
 								<button class="footer-subscribe-block__submit">Subscribe</button>
 							</form>
 						</div>
@@ -237,7 +291,7 @@ class Home extends Component {
 									<div class="sign-in-buttons">
 										<div class="sign-in-buttons__facebook" onClick={e => this.handleSocialLogin(e, new firebase.auth.FacebookAuthProvider())} />
 										<div class="sign-in-buttons__gplus" onClick={e => this.handleSocialLogin(e, new firebase.auth.GoogleAuthProvider())} />
-										<div class="sign-in-buttons__twitter" />
+										<div class="sign-in-buttons__twitter" onClick={e => this.handleSocialLogin(e, new firebase.auth.TwitterAuthProvider())} />
 									</div>
 								</div>
 							</div>
