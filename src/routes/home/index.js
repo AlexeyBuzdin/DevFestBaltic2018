@@ -1,4 +1,5 @@
 import { h, Component } from 'preact';
+import { Link } from 'preact-router/match';
 import config from '../../configs/firebase';
 import firebase from 'firebase/app';
 import 'firebase/database';
@@ -6,17 +7,36 @@ import 'firebase/auth';
 
 const app = firebase.initializeApp(config);
 
+const slugify = (str) => {
+	str = str.replace(/^\s+|\s+$/g, ''); // trim
+	str = str.toLowerCase();
+  
+	// remove accents, swap ñ for n, etc
+	const from = 'åàáãäâèéëêìíïîòóöôùúüûñç·/_,:;';
+	const to = 'aaaaaaeeeeiiiioooouuuunc------';
+	for (let i=0, l=from.length ; i<l ; i++) {
+		str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+	}
+
+	return str
+		.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+		.replace(/\s+/g, '-') // collapse whitespace and replace by -
+		.replace(/-+/g, '-') // collapse dashes
+		.replace(/^-+/, '') // trim - from start of text
+		.replace(/-+$/, ''); // trim - from end of text
+};
+
 class Home extends Component {
 	
 	getModalContainerClass = () => {
-		if (this.state.showLogin || this.state.selectedApp) {
+		if (this.state.showLogin || this.state.slug) {
 			return 'modal-container modal-container_visible';
 		}
 		return 'modal-container';
 	}
 
 	getPageWrapperClass = () => {
-		if (this.state.showLogin || this.state.selectedApp) {
+		if (this.state.showLogin || this.state.slug) {
 			return 'page-wrapper page-wrapper_blur';
 		}
 		return 'page-wrapper';
@@ -30,13 +50,12 @@ class Home extends Component {
 
 	handleCloseModal = (e) => {
 		e.preventDefault();
-		this.setState({ showLogin: false, selectedApp: null });
+		this.setState({ showLogin: false });
 		document.body.classList.remove('body-no-scroll');
 	}
 
 	handleChoose = (e, selectedApp) => {
 		e.preventDefault();
-		this.setState({ selectedApp });
 		document.body.classList.add('body-no-scroll');
 	}
 
@@ -65,17 +84,24 @@ class Home extends Component {
 
 	constructor(props) {
 		super(props);
+
+		const slug = props.matches.slug || null;
 		this.state = {
-			slug: null,
 			showLogin: false,
 			apps: [],
-			selectedApp: null,
 			user: window.localStorage.getItem('user') ? JSON.parse(window.localStorage.getItem('user')) : null,
 			showAllDesigns: false,
 			showAllFeatures: false,
 			showAllIndies: false,
-			email: null
+			email: null,
+			slug
 		};
+		if (slug) {
+			document.body.classList.add('body-no-scroll');
+		}
+		else {
+			document.body.classList.remove('body-no-scroll');
+		}
 		const ref = app.database().ref('apps');
 		ref.on('value', (snapshot) => {
 			let items = [];
@@ -87,9 +113,31 @@ class Home extends Component {
 			console.log(err);
 		});
 	}
-	
+
+	componentWillReceiveProps(nextProps) {
+		const slug = nextProps.matches.slug || null;
+		this.setState({ slug });
+		if (slug) {
+			document.body.classList.add('body-no-scroll');
+		}
+		else {
+			document.body.classList.remove('body-no-scroll');
+		}
+	}
+
+	renderAppItem = (item) => (
+		<Link class="app-card" href={`/${slugify(item.name)}`}>
+			<div class="app-card__content">
+				<div class="app-card__icon"><img src={item.icon} /></div>
+				<div class="app-card__name"><span>{item.name}</span></div>
+				<div class="app-card__votes"><span>0</span>votes</div>
+				<span class="app-card__engage-button modal-opener" role="button">Choose</span>
+			</div>
+		</Link>
+	)
+
 	render() {
-		const { showLogin, selectedApp, apps, user, showAllDesigns, showAllFeatures, showAllIndies, email } = this.state;
+		const { showLogin, slug, apps, user, showAllDesigns, showAllFeatures, showAllIndies, email } = this.state;
 
 		// TODO: to do this much better %)
 		const designsApps = apps.filter(app => app.design);
@@ -98,6 +146,8 @@ class Home extends Component {
 		const slicedFeaturesApps = apps.filter(app => app.features).splice(0, 4);
 		const indiesApps = apps.filter(app => app.indie);
 		const slicedIndiesApps = apps.filter(app => app.indie).splice(0, 4);
+
+		const selectedApp = apps.find(i => slugify(i.name) === slug);
 
 		return (
 			<div>
@@ -153,14 +203,7 @@ class Home extends Component {
 							<div class="leaders-block__title">Leaders</div>
 							<div class="leading-apps">
 								{(showAllDesigns ? designsApps : slicedDesignsApps).map(item => (
-									<div class="app-card" onClick={e => this.handleChoose(e, item)}>
-										<div class="app-card__content">
-											<div class="app-card__icon"><img src={item.icon} /></div>
-											<div class="app-card__name"><span>{item.name}</span></div>
-											<div class="app-card__votes"><span>0</span>votes</div>
-											<a href="#" class="app-card__engage-button modal-opener" role="button">Choose</a>
-										</div>
-									</div>
+									this.renderAppItem(item)
 								))}
 							</div>
 						</div>
@@ -179,14 +222,7 @@ class Home extends Component {
 							<div class="leaders-block__title">Leaders</div>
 							<div class="leading-apps">
 								{(showAllFeatures ? featuresApps : slicedFeaturesApps).map(item => (
-									<div class="app-card" onClick={e => this.handleChoose(e, item)}>
-										<div class="app-card__content">
-											<div class="app-card__icon"><img src={item.icon} /></div>
-											<div class="app-card__name"><span>{item.name}</span></div>
-											<div class="app-card__votes"><span>0</span>votes</div>
-											<a href="#" class="app-card__engage-button modal-opener" role="button">Choose</a>
-										</div>
-									</div>
+									this.renderAppItem(item)
 								))}
 							</div>
 						</div>
@@ -205,14 +241,7 @@ class Home extends Component {
 							<div class="leaders-block__title">Leaders</div>
 							<div class="leading-apps">
 								{(showAllIndies ? indiesApps : slicedIndiesApps).map(item => (
-									<div class="app-card" onClick={e => this.handleChoose(e, item)}>
-										<div class="app-card__content">
-											<div class="app-card__icon"><img src={item.icon} /></div>
-											<div class="app-card__name"><span>{item.name}</span></div>
-											<div class="app-card__votes"><span>0</span>votes</div>
-											<a href="#" class="app-card__engage-button modal-opener" role="button">Choose</a>
-										</div>
-									</div>
+									this.renderAppItem(item)
 								))}
 							</div>
 						</div>
@@ -256,7 +285,7 @@ class Home extends Component {
 						<div class="app-modal modal modal_visible">
 							<div class="modal-head">
 								<div class="modal-head__title modal-head__title_app">{selectedApp.name}</div>
-								<div class="modal-close" onClick={this.handleCloseModal} />
+								<Link class="modal-close" href="/" />
 							</div>
 							<div class="modal-content">
 								<div class="app-modal-content">
