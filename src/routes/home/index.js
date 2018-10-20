@@ -56,15 +56,33 @@ class Home extends Component {
 
 	handleChoose = (e, selectedApp) => {
 		e.preventDefault();
+		const { user } = this.state;
 		document.body.classList.add('body-no-scroll');
+		if (!user) {
+			this.setState({ showLogin: true });
+		}
+		else {
+			let updates = {};
+			if (!selectedApp.votes) {
+				selectedApp.votes = [];
+			}
+			const newVoteKey = firebase.database().ref().child('votes').push().key;
+			updates['/votes/' + newVoteKey] = {
+				app_id: selectedApp.key,
+				user_id: user.uid,
+				category: 'design'
+			};
+			firebase.database().ref().update(updates).then(resp => {
+				alert(resp);
+			});
+		}
 	}
 
 	handleSocialLogin = (e, provider) => {
 		e.preventDefault();
 		const that = this;
 		firebase.auth().signInWithPopup(provider).then((result) => {
-			that.setState({ user: result.user, showLogin: false });
-			window.localStorage.setItem('user', JSON.stringify(result.user));
+			that.setState({ showLogin: false });
 		  }).catch((error) => {
 			console.dir(error);
 		  });
@@ -82,6 +100,37 @@ class Home extends Component {
 		});
 	}
 
+	loadData = () => {
+		const ref = app.database().ref('apps');
+		ref.on('value', (snapshot) => {
+			let items = [];
+			snapshot.forEach((childSnapshot) => {
+				items.push({
+					key: childSnapshot.key,
+					val: childSnapshot.val()
+				});
+			});
+			this.setState({ apps: items });
+		}, (err) => {
+			console.log(err);
+		});
+
+		firebase.auth().onAuthStateChanged(user => {
+			if (user) {
+				const votes = app.database().ref('votes').equalTo('user_id', user.uid);
+				votes.on('value', (snapshot) => {
+					let items = [];
+					snapshot.forEach((childSnapshot) => {
+						console.log(childSnapshot.val());
+					});
+					this.setState({ votes: items, user });
+				}, (err) => {
+					console.log(err);
+				});
+			}
+		});
+	}
+
 	constructor(props) {
 		super(props);
 
@@ -89,11 +138,11 @@ class Home extends Component {
 		this.state = {
 			showLogin: false,
 			apps: [],
-			user: window.localStorage.getItem('user') ? JSON.parse(window.localStorage.getItem('user')) : null,
 			showAllDesigns: false,
 			showAllFeatures: false,
 			showAllIndies: false,
 			email: null,
+			user: null,
 			slug
 		};
 		if (slug) {
@@ -102,16 +151,7 @@ class Home extends Component {
 		else {
 			document.body.classList.remove('body-no-scroll');
 		}
-		const ref = app.database().ref('apps');
-		ref.on('value', (snapshot) => {
-			let items = [];
-			snapshot.forEach((childSnapshot) => {
-				items.push(childSnapshot.val());
-			});
-			this.setState({ apps: items });
-		}, (err) => {
-			console.log(err);
-		});
+		this.loadData();
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -126,10 +166,10 @@ class Home extends Component {
 	}
 
 	renderAppItem = (item) => (
-		<Link class="app-card" href={`/${slugify(item.name)}`}>
+		<Link class="app-card" href={`/${slugify(item.val.name)}`}>
 			<div class="app-card__content">
-				<div class="app-card__icon"><img src={item.icon} /></div>
-				<div class="app-card__name"><span>{item.name}</span></div>
+				<div class="app-card__icon"><img src={item.val.icon} /></div>
+				<div class="app-card__name"><span>{item.val.name}</span></div>
 				<div class="app-card__votes"><span>0</span>votes</div>
 				<span class="app-card__engage-button modal-opener" role="button">Choose</span>
 			</div>
@@ -137,17 +177,16 @@ class Home extends Component {
 	)
 
 	render() {
-		const { showLogin, slug, apps, user, showAllDesigns, showAllFeatures, showAllIndies, email } = this.state;
+		const { showLogin, slug, apps, showAllDesigns, showAllFeatures, showAllIndies, user, email } = this.state;
 
-		// TODO: to do this much better %)
-		const designsApps = apps.filter(app => app.design);
-		const slicedDesignsApps = apps.filter(app => app.design).splice(0, 4);
-		const featuresApps = apps.filter(app => app.features);
-		const slicedFeaturesApps = apps.filter(app => app.features).splice(0, 4);
-		const indiesApps = apps.filter(app => app.indie);
-		const slicedIndiesApps = apps.filter(app => app.indie).splice(0, 4);
+		const designsApps = apps.filter(app => app.val.category === 'design');
+		const slicedDesignsApps = apps.filter(app => app.val.category === 'design').splice(0, 4);
+		const featuresApps = apps.filter(app => app.val.category === 'features');
+		const slicedFeaturesApps = apps.filter(app => app.val.category === 'features').splice(0, 4);
+		const indiesApps = apps.filter(app => app.val.category === 'indie');
+		const slicedIndiesApps = apps.filter(app => app.val.category === 'indie').splice(0, 4);
 
-		const selectedApp = apps.find(i => slugify(i.name) === slug);
+		const selectedApp = apps.find(i => slugify(i.val.name) === slug);
 
 		return (
 			<div>
@@ -168,8 +207,7 @@ class Home extends Component {
 						{user ? (
 							<a href="#" class="header-login-block__sign-in-and-out modal-opener" role="button" onClick={e => {
 								e.preventDefault();
-								this.setState({ user: null });
-								window.localStorage.removeItem('user');
+								// logout
 							}}
 							>Sign out</a>
 						) : (
@@ -284,21 +322,21 @@ class Home extends Component {
 					{selectedApp && (
 						<div class="app-modal modal modal_visible">
 							<div class="modal-head">
-								<div class="modal-head__title modal-head__title_app">{selectedApp.name}</div>
+								<div class="modal-head__title modal-head__title_app">{selectedApp.val.name}</div>
 								<Link class="modal-close" href="/" />
 							</div>
 							<div class="modal-content">
 								<div class="app-modal-content">
 									<div class="app-modal-content__app-links">
-										<div class="app-card__icon"><img src={selectedApp.icon} /></div>
-										{selectedApp.apple_url && <a class="app-link-appstore" href={selectedApp.apple_url} target="_blank" />}
-										{selectedApp.google_url && <a class="app-link-gplay" href={selectedApp.google_url} target="_blank" />}
+										<div class="app-card__icon"><img src={selectedApp.val.icon} /></div>
+										{selectedApp.val.apple_url && <a class="app-link-appstore" href={selectedApp.val.apple_url} target="_blank" />}
+										{selectedApp.val.google_url && <a class="app-link-gplay" href={selectedApp.val.google_url} target="_blank" />}
 									</div>
 									<div class="app-modal-content__description">
-										<div class="modal-heading">{selectedApp.title}</div>
-										<div class="modal-text">{selectedApp.description}</div>
+										<div class="modal-heading">{selectedApp.val.title}</div>
+										<div class="modal-text">{selectedApp.val.description}</div>
 										<div class="app-modal-bottom">
-											<a class="app-modal-bottom__choose modal-opener" role="button" data-modal="thank-you">Choose</a>
+											<a href="#" class="app-modal-bottom__choose modal-opener" role="button" onClick={e => this.handleChoose(e, selectedApp)}>Choose</a>
 											<div class="app-modal-bottom__votes"><span>0</span>votes</div>
 										</div>
 									</div>
@@ -320,7 +358,6 @@ class Home extends Component {
 									<div class="sign-in-buttons">
 										<div class="sign-in-buttons__facebook" onClick={e => this.handleSocialLogin(e, new firebase.auth.FacebookAuthProvider())} />
 										<div class="sign-in-buttons__gplus" onClick={e => this.handleSocialLogin(e, new firebase.auth.GoogleAuthProvider())} />
-										<div class="sign-in-buttons__twitter" onClick={e => this.handleSocialLogin(e, new firebase.auth.TwitterAuthProvider())} />
 									</div>
 								</div>
 							</div>
