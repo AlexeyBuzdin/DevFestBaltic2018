@@ -3,3 +3,8 @@
 .app-card {
     cursor: pointer;
 }
+
+.app-modal-bottom__your-choice {
+    background-color:#9c26b0;
+    cursor: default;
+}

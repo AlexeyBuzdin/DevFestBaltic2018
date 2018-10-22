@@ -26,6 +26,12 @@ const slugify = (str) => {
 		.replace(/-+$/, ''); // trim - from end of text
 };
 
+const total = (items) => {
+	let sum = 0;
+	items.forEach(i => sum += i.val.votes_count);
+	return sum;
+};
+
 class Home extends Component {
 	
 	getModalContainerClass = () => {
@@ -50,7 +56,7 @@ class Home extends Component {
 
 	handleCloseModal = (e) => {
 		e.preventDefault();
-		this.setState({ showLogin: false });
+		this.setState({ showLogin: false, showShare: false });
 		document.body.classList.remove('body-no-scroll');
 	}
 
@@ -66,14 +72,16 @@ class Home extends Component {
 			if (!selectedApp.votes) {
 				selectedApp.votes = [];
 			}
-			const newVoteKey = firebase.database().ref().child('votes').push().key;
+			firebase.database().ref().child('votes').push();
+			const newVoteKey = selectedApp.val.category + '_' + user.uid;
 			updates['/votes/' + newVoteKey] = {
 				app_id: selectedApp.key,
 				user_id: user.uid,
-				category: 'design'
+				category: selectedApp.val.category
 			};
-			firebase.database().ref().update(updates).then(resp => {
-				alert(resp);
+			firebase.database().ref().update(updates).then(() => {
+				this.loadData();
+				this.setState({ showShare: true });
 			});
 		}
 	}
@@ -107,7 +115,10 @@ class Home extends Component {
 			snapshot.forEach((childSnapshot) => {
 				items.push({
 					key: childSnapshot.key,
-					val: childSnapshot.val()
+					val: {
+						...childSnapshot.val(),
+						votes_count: 0
+					}
 				});
 			});
 			this.setState({ apps: items });
@@ -115,19 +126,31 @@ class Home extends Component {
 			console.log(err);
 		});
 
-		firebase.auth().onAuthStateChanged(user => {
-			if (user) {
-				const votes = app.database().ref('votes').equalTo('user_id', user.uid);
-				votes.on('value', (snapshot) => {
-					let items = [];
-					snapshot.forEach((childSnapshot) => {
-						console.log(childSnapshot.val());
-					});
-					this.setState({ votes: items, user });
-				}, (err) => {
-					console.log(err);
-				});
+		firebase.auth().onAuthStateChanged(user => this.setState({ user }));
+
+		const votes = app.database().ref('votes');
+		votes.on('value', (snapshot) => {
+			let items = [];
+			let appsVotes = {};
+			snapshot.forEach((childSnapshot) => {
+				const item = childSnapshot.val();
+				if (!appsVotes[item.app_id]) {
+					appsVotes[item.app_id] = 0;
+				}
+				appsVotes[item.app_id]++;
+				items.push(item);
+			});
+			let { apps } = this.state;
+			for (const appId in appsVotes) {
+				for (const key in apps) {
+					if (apps[key].key === appId) {
+						apps[key].val.votes_count = appsVotes[appId];
+					}
+				}
 			}
+			this.setState({ votes: items, apps });
+		}, (err) => {
+			console.log(err);
 		});
 	}
 
@@ -137,12 +160,14 @@ class Home extends Component {
 		const slug = props.matches.slug || null;
 		this.state = {
 			showLogin: false,
+			showShare: false,
 			apps: [],
 			showAllDesigns: false,
 			showAllFeatures: false,
 			showAllIndies: false,
 			email: null,
 			user: null,
+			votes: [],
 			slug
 		};
 		if (slug) {
@@ -165,19 +190,33 @@ class Home extends Component {
 		}
 	}
 
-	renderAppItem = (item) => (
-		<Link class="app-card" href={`/${slugify(item.val.name)}`}>
-			<div class="app-card__content">
-				<div class="app-card__icon"><img src={item.val.icon} /></div>
-				<div class="app-card__name"><span>{item.val.name}</span></div>
-				<div class="app-card__votes"><span>0</span>votes</div>
-				<span class="app-card__engage-button modal-opener" role="button">Choose</span>
-			</div>
-		</Link>
-	)
+	renderAppItem = (item) => {
+		const { votes, user } = this.state;
+		let isYour = false;
+		if (user) {
+			isYour = !!votes.find(v => user && v.app_id === item.key && v.category === item.val.category && v.user_id === user.uid);
+		}
+		let cssClass = 'app-card__engage-button';
+		if (isYour) {
+			cssClass += ' app-card__engage-button_your-choice';
+		}
+		return (
+			<Link class="app-card" href={`/${slugify(item.val.name)}`}>
+				<div class="app-card__content">
+					<div class="app-card__icon"><img src={item.val.icon} /></div>
+					<div class="app-card__name"><span>{item.val.name}</span></div>
+					<div class="app-card__votes"><span>{item.val.votes_count}</span>votes</div>
+				
+					<span class={cssClass} role="button">
+						{isYour ? 'Your choice' : 'Choose'}
+					</span>
+				</div>
+			</Link>
+		);
+	}
 
 	render() {
-		const { showLogin, slug, apps, showAllDesigns, showAllFeatures, showAllIndies, user, email } = this.state;
+		const { showLogin, showShare, slug, apps, votes, showAllDesigns, showAllFeatures, showAllIndies, user, email } = this.state;
 
 		const designsApps = apps.filter(app => app.val.category === 'design');
 		const slicedDesignsApps = apps.filter(app => app.val.category === 'design').splice(0, 4);
@@ -191,7 +230,7 @@ class Home extends Component {
 		return (
 			<div>
 				<header class="header">
-					<div class="nominate-the-app-button">Nominate the app</div><a class="see-the-prizes" href="#"><span>See the </span>prizes</a>
+					<div class="nominate-the-app-button">Nominate the app</div>
 					<div class="mobile-nav">
 						<div class="mobile-nav__title">Categories:</div>
 						<div class="mobile-nav__item">Best design award 2018</div>
@@ -205,13 +244,15 @@ class Home extends Component {
 							</div>
 						</div>
 						{user ? (
-							<a href="#" class="header-login-block__sign-in-and-out modal-opener" role="button" onClick={e => {
+							<a href="#" class="header-login-block__sign-in-and-out" role="button" onClick={e => {
 								e.preventDefault();
-								// logout
+								firebase.auth().signOut().then(() => {
+									this.setState({ user: null });
+								});
 							}}
 							>Sign out</a>
 						) : (
-							<a href="#" class="header-login-block__sign-in-and-out modal-opener" role="button" onClick={this.handleSignInOpen}>Sign in</a>
+							<a href="#" class="header-login-block__sign-in-and-out" role="button" onClick={this.handleSignInOpen}>Sign in</a>
 						)}
 					</div>
 					<a href="#" class="mobile-nav-closer" role="button" onClick={e => {
@@ -236,7 +277,7 @@ class Home extends Component {
 					</section>
 					<section class="nomination-section">
 						<h1 class="heading-h1">Category Best Design Award 2018</h1>
-						<div class="votes-counter"><span>0</span>votes</div>
+						<div class="votes-counter"><span>{total(designsApps)}</span>votes</div>
 						<div class="leaders-block">
 							<div class="leaders-block__title">Leaders</div>
 							<div class="leading-apps">
@@ -255,7 +296,7 @@ class Home extends Component {
 					</section>
 					<section class="nomination-section">
 						<h1 class="heading-h1">Category Best Features Award 2018</h1>
-						<div class="votes-counter"><span>0</span>votes</div>
+						<div class="votes-counter"><span>{total(featuresApps)}</span>votes</div>
 						<div class="leaders-block">
 							<div class="leaders-block__title">Leaders</div>
 							<div class="leading-apps">
@@ -274,7 +315,7 @@ class Home extends Component {
 					</section>
 					<section class="nomination-section">
 						<h1 class="heading-h1">Category Best Indie App Award 2018</h1>
-						<div class="votes-counter"><span>0</span>votes</div>
+						<div class="votes-counter"><span>{total(indiesApps)}</span>votes</div>
 						<div class="leaders-block">
 							<div class="leaders-block__title">Leaders</div>
 							<div class="leading-apps">
@@ -336,8 +377,12 @@ class Home extends Component {
 										<div class="modal-heading">{selectedApp.val.title}</div>
 										<div class="modal-text">{selectedApp.val.description}</div>
 										<div class="app-modal-bottom">
-											<a href="#" class="app-modal-bottom__choose modal-opener" role="button" onClick={e => this.handleChoose(e, selectedApp)}>Choose</a>
-											<div class="app-modal-bottom__votes"><span>0</span>votes</div>
+											{votes.find(v => user && v.app_id === selectedApp.key && v.category === selectedApp.val.category && v.user_id === user.uid) ? (
+												<span class="app-modal-bottom__choose app-modal-bottom__your-choice" role="button">Your choice</span>
+											) : (
+												<a href="#" class="app-modal-bottom__choose" role="button" onClick={e => this.handleChoose(e, selectedApp)}>Choose</a>
+											)}
+											<div class="app-modal-bottom__votes"><span>{selectedApp.val.votes_count}</span>votes</div>
 										</div>
 									</div>
 								</div>
@@ -364,22 +409,28 @@ class Home extends Component {
 						</div>
 					)}
 
-
-					<div class="thank-you-modal modal">
-						<div class="modal-head">
-							<div class="modal-head__title">Thank you!</div>
-							<div class="modal-close" />
-						</div>
-						<div class="modal-content">
-							<div class="sign-in-modal-content">
-								<div class="modal-heading">Thank You for your voice! </div>
-								<div class="modal-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
-								<div class="share-block">
-									<div class="modal-text">“I have voted for Qfer in “Best Design App” category. Проголосуй и выиграй Xiami Mi Band 3!”</div>
+					{showShare && (
+						<div class="thank-you-modal modal modal_visible">
+							<div class="modal-head">
+								<div class="modal-head__title">Thank you!</div>
+								<div class="modal-close" onClick={this.handleCloseModal} />
+							</div>
+							<div class="modal-content">
+								<div class="sign-in-modal-content">
+									<div class="modal-heading">Thank You for your voice! </div>
+									<div class="modal-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+									<div class="share-block">
+										<div class="modal-text">“I have voted for Qfer in “Best Design App” category. Проголосуй и выиграй Xiami Mi Band 3!”</div>
+										
+										<iframe src="https://www.facebook.com/plugins/share_button.php?href=https%3A%2F%2Fbest-app-awards.firebaseapp.com&layout=button&size=large&mobile_iframe=true&appId=882205298495626&width=59&height=20" width="73" height="28" style="border:none;overflow:hidden" scrolling="no" frameborder="0"
+																						allowTransparency="true" allow="encrypted-media"
+										/>
+										<a class="twitter-share-button" href="https://twitter.com/intent/tweet?text=I%20have%20voted%20for%20%7Bapp%7D%20in%20%E2%80%9CBest%20Design%20App%E2%80%9D%20category.%20%D0%9F%D1%80%D0%BE%D0%B3%D0%BE%D0%BB%D0%BE%D1%81%D1%83%D0%B9%20%D0%B8%20%D0%B2%D1%8B%D0%B8%D0%B3%D1%80%D0%B0%D0%B9%20Xiami%20Mi%20Band%203%21" target="_blank" data-size="large">Tweet</a>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
+					)}
 				</div>
 			</div>
 		);
