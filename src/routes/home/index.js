@@ -4,6 +4,7 @@ import config from '../../configs/firebase';
 import firebase from 'firebase/app';
 import 'firebase/database';
 import 'firebase/auth';
+import { route } from 'preact-router';
 
 const app = firebase.initializeApp(config);
 
@@ -58,7 +59,9 @@ class Home extends Component {
 
 	handleCloseModal = (e) => {
 		e.preventDefault();
-		this.setState({ showLogin: false, showShare: false });
+		this.setState({ showLogin: false, showShare: false }, () => {
+			route('/', true);
+		});
 		document.body.classList.remove('body-no-scroll');
 	}
 
@@ -92,7 +95,9 @@ class Home extends Component {
 		e.preventDefault();
 		const that = this;
 		firebase.auth().signInWithPopup(provider).then((result) => {
-			that.setState({ showLogin: false });
+			that.setState({ showLogin: false }, () => {
+				document.body.classList.remove('body-no-scroll');
+			});
 		  }).catch((error) => {
 			console.dir(error);
 		  });
@@ -157,8 +162,15 @@ class Home extends Component {
 	}
 
 	getCategory = (category) => {
-		// TODO: place switch here and return human category name
-		return category
+		switch (category) {
+			case 'design':
+				return 'Best Design';
+			case 'indie':
+				return 'Best Indie App';
+			case 'features':
+				return 'Best Features';
+		}
+		
 	}
 
 	constructor(props) {
@@ -215,7 +227,7 @@ class Home extends Component {
 					<div class="app-card__votes"><span>{item.val.votes_count}</span>votes</div>
 				
 					<span class={cssClass} role="button">
-						{isYour ? 'Your choice' : 'Choose'}
+						{isYour ? 'Your vote' : 'Vote'}
 					</span>
 				</div>
 			</Link>
@@ -385,9 +397,9 @@ class Home extends Component {
 										<div class="modal-text">{selectedApp.val.description}</div>
 										<div class="app-modal-bottom">
 											{votes.find(v => user && v.app_id === selectedApp.key && v.category === selectedApp.val.category && v.user_id === user.uid) ? (
-												<span class="app-modal-bottom__choose app-modal-bottom__your-choice" role="button">Your choice</span>
+												<span class="app-modal-bottom__choose app-modal-bottom__your-choice" role="button">Your vote</span>
 											) : (
-												<a href="#" class="app-modal-bottom__choose" role="button" onClick={e => this.handleChoose(e, selectedApp)}>Choose</a>
+												<a href="#" class="app-modal-bottom__choose" role="button" onClick={e => this.handleChoose(e, selectedApp)}>Vote</a>
 											)}
 											<div class="app-modal-bottom__votes"><span>{selectedApp.val.votes_count}</span>votes</div>
 										</div>
@@ -401,7 +413,7 @@ class Home extends Component {
 						<div class="sign-in-modal modal modal_visible">
 							<div class="modal-head">
 								<div class="modal-head__title">Sign In With Social Network</div>
-								<div class="modal-close"  onClick={this.handleCloseModal} />
+								<div class="modal-close" onClick={this.handleCloseModal} />
 							</div>
 							<div class="modal-content">
 								<div class="sign-in-modal-content">
@@ -424,19 +436,23 @@ class Home extends Component {
 							</div>
 							<div class="modal-content">
 								<div class="sign-in-modal-content">
-									<div class="modal-heading">Thank You for your voice! </div>
+									<div class="modal-heading">Thank You for your voice!</div>
 									<div class="modal-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
 									<div class="share-block">
-										<div class="modal-text">“I have voted for ${selectedApp.val.title} in ${this.getCategory(selectedApp.val.category)} category. Проголосуй и выиграй Xiaomi Mi Band 3!"</div>
+										<div class="modal-text">"{
+											shareText.replace('APP', selectedApp.val.title)
+												.replace('CATEGORY', this.getCategory(selectedApp.val.category))
+										}"</div>
 										<div class="share-buttons-flex">
 											<iframe src="https://www.facebook.com/plugins/share_button.php?href=https%3A%2F%2Fbest-app-awards.firebaseapp.com&layout=button&size=large&mobile_iframe=true&appId=882205298495626&width=59&height=20&quote=hello" width="73" height="28" style="border:none;overflow:hidden" scrolling="no" frameborder="0"
 												allowTransparency="true" allow="encrypted-media"
 											/>
-											<a class="twitter-share-button" 
-											href={`https://twitter.com/intent/tweet?text=${encodeURI(
-												shareText.replace('APP', selectedApp.val.title)
-												.replace('CATEGORY', this.getCategory(selectedApp.val.category))
-												)}`} target="_blank" data-size="large" />
+											<a class="twitter-share-button"
+												href={`https://twitter.com/intent/tweet?text=${encodeURI(
+													shareText.replace('APP', selectedApp.val.title)
+														.replace('CATEGORY', this.getCategory(selectedApp.val.category))
+												)}`} target="_blank" data-size="large"
+											/>
 										</div>
 									</div>
 								</div>
