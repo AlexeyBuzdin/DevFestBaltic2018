@@ -103,6 +103,17 @@ class Home extends Component {
 		  });
 	}
 
+	handleFacebookShare = (e, selectedApp) => {
+		e.preventDefault();
+		FB.ui(
+			{
+			  method: 'share',
+			  href: 'https://best-app-awards.firebaseapp.com',
+			  quote: shareText.replace('APP', selectedApp.val.title).replace('CATEGORY', this.getCategory(selectedApp.val.category))
+			}
+		  );
+	}
+
 	handleSendEmail = (e) => {
 		e.preventDefault();
 		const { email } = this.state;
@@ -444,9 +455,8 @@ class Home extends Component {
 												.replace('CATEGORY', this.getCategory(selectedApp.val.category))
 										}"</div>
 										<div class="share-buttons-flex">
-											<iframe src="https://www.facebook.com/plugins/share_button.php?href=https%3A%2F%2Fbest-app-awards.firebaseapp.com&layout=button&size=large&mobile_iframe=true&appId=882205298495626&width=59&height=20&quote=hello" width="73" height="28" style="border:none;overflow:hidden" scrolling="no" frameborder="0"
-												allowTransparency="true" allow="encrypted-media"
-											/>
+											<button class="facebook-share-button" onClick={e => this.handleFacebookShare(e, selectedApp)} style="margin-right: 0;" />
+											
 											<a class="twitter-share-button"
 												href={`https://twitter.com/intent/tweet?text=${encodeURI(
 													shareText.replace('APP', selectedApp.val.title)

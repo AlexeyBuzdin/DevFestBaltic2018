@@ -22,11 +22,18 @@
 		<% } %>
 		<meta property="og:url" content="https://best-app-awards.firebaseapp.com" />
 		<meta property="og:type" content="website" />
-		<meta property="og:title" content="“Best Design App”" />
-		<meta property="og:description" content="I have voted for APP in CATEGORY category. Проголосуй и выиграй Xiaomi Mi Band 3!" />
-		<!-- <meta property="og:image" content="https://www.your-domain.com/path/image.jpg" /> -->
+		<meta property="og:title" content="Best Design App" />
 	</head>
 	<body>
+		<div id="fb-root"></div>
+		<script>(function(d, s, id) {
+			var js, fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) return;
+			js = d.createElement(s); js.id = id;
+			js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.2&appId=334873463953210&autoLogAppEvents=1';
+			fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));</script>
+		  
 		<%= htmlWebpackPlugin.options.ssr({
 			url: '/'
 		}) %>
