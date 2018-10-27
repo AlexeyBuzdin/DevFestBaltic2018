@@ -32,6 +32,8 @@ const total = (items) => {
 	return sum;
 };
 
+const shareText = 'I have voted for APP in CATEGORY category. Проголосуй и выиграй Xiaomi Mi Band 3!';
+
 class Home extends Component {
 	
 	getModalContainerClass = () => {
@@ -154,6 +156,11 @@ class Home extends Component {
 		});
 	}
 
+	getCategory = (category) => {
+		// TODO: place switch here and return human category name
+		return category
+	}
+
 	constructor(props) {
 		super(props);
 
@@ -230,7 +237,7 @@ class Home extends Component {
 		return (
 			<div>
 				<header class="header">
-					<div class="nominate-the-app-button">Nominate the app</div>
+					<a href="https://docs.google.com/forms/d/1_c0L29aClEeACm9r9xvR6IlLaiED_ij6OkIFzvMAUkM/edit?usp=sharing" target="_blank" class="nominate-the-app-button">Nominate the app</a>
 					<div class="mobile-nav">
 						<div class="mobile-nav__title">Categories:</div>
 						<div class="mobile-nav__item">Best design award 2018</div>
@@ -420,12 +427,17 @@ class Home extends Component {
 									<div class="modal-heading">Thank You for your voice! </div>
 									<div class="modal-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
 									<div class="share-block">
-										<div class="modal-text">“I have voted for Qfer in “Best Design App” category. Проголосуй и выиграй Xiami Mi Band 3!”</div>
-										
-										<iframe src="https://www.facebook.com/plugins/share_button.php?href=https%3A%2F%2Fbest-app-awards.firebaseapp.com&layout=button&size=large&mobile_iframe=true&appId=882205298495626&width=59&height=20" width="73" height="28" style="border:none;overflow:hidden" scrolling="no" frameborder="0"
-																						allowTransparency="true" allow="encrypted-media"
-										/>
-										<a class="twitter-share-button" href="https://twitter.com/intent/tweet?text=I%20have%20voted%20for%20%7Bapp%7D%20in%20%E2%80%9CBest%20Design%20App%E2%80%9D%20category.%20%D0%9F%D1%80%D0%BE%D0%B3%D0%BE%D0%BB%D0%BE%D1%81%D1%83%D0%B9%20%D0%B8%20%D0%B2%D1%8B%D0%B8%D0%B3%D1%80%D0%B0%D0%B9%20Xiami%20Mi%20Band%203%21" target="_blank" data-size="large">Tweet</a>
+										<div class="modal-text">“I have voted for ${selectedApp.val.title} in ${this.getCategory(selectedApp.val.category)} category. Проголосуй и выиграй Xiaomi Mi Band 3!"</div>
+										<div class="share-buttons-flex">
+											<iframe src="https://www.facebook.com/plugins/share_button.php?href=https%3A%2F%2Fbest-app-awards.firebaseapp.com&layout=button&size=large&mobile_iframe=true&appId=882205298495626&width=59&height=20&quote=hello" width="73" height="28" style="border:none;overflow:hidden" scrolling="no" frameborder="0"
+												allowTransparency="true" allow="encrypted-media"
+											/>
+											<a class="twitter-share-button" 
+											href={`https://twitter.com/intent/tweet?text=${encodeURI(
+												shareText.replace('APP', selectedApp.val.title)
+												.replace('CATEGORY', this.getCategory(selectedApp.val.category))
+												)}`} target="_blank" data-size="large" />
+										</div>
 									</div>
 								</div>
 							</div>
