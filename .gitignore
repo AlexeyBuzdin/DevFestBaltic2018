@@ -4,3 +4,4 @@ node_modules
 *.lock
 /markup/prod
 .DS_Store
+.firebase
