@@ -30,7 +30,13 @@
     "preact-render-spy": "^1.2.1"
   },
   "dependencies": {
-    "firebase": "^5.5.3",
+    "@firebase/app": "^0.3.4",
+    "@firebase/auth": "^0.7.8",
+    "@firebase/auth-types": "^0.3.4",
+    "@firebase/database": "^0.3.6",
+    "@firebase/firestore": "^0.8.6",
+    "firebase": "^5.5.7",
+    "gulp": "^3.9.1",
     "preact": "^8.2.6",
     "preact-compat": "^3.17.0",
     "preact-router": "^2.5.7"

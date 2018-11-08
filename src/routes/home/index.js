@@ -11,7 +11,7 @@ const app = firebase.initializeApp(config);
 const slugify = (str) => {
 	str = str.replace(/^\s+|\s+$/g, ''); // trim
 	str = str.toLowerCase();
-  
+
 	// remove accents, swap ñ for n, etc
 	const from = 'åàáãäâèéëêìíïîòóöôùúüûñç·/_,:;';
 	const to = 'aaaaaaeeeeiiiioooouuuunc------';
@@ -33,10 +33,10 @@ const total = (items) => {
 	return sum;
 };
 
-const shareText = 'I have voted for APP in CATEGORY category. Проголосуй и выиграй Xiaomi Mi Band 3!';
+const shareText = 'I have voted for APP in CATEGORY category. Vote for the best app in each category and win Xiaomi Mi Band 3!';
 
 class Home extends Component {
-	
+
 	getModalContainerClass = () => {
 		if (this.state.showLogin || this.state.slug) {
 			return 'modal-container modal-container_visible';
@@ -181,7 +181,7 @@ class Home extends Component {
 			case 'features':
 				return 'Best Features';
 		}
-		
+
 	}
 
 	constructor(props) {
@@ -236,7 +236,7 @@ class Home extends Component {
 					<div class="app-card__icon"><img src={item.val.icon} /></div>
 					<div class="app-card__name"><span>{item.val.name}</span></div>
 					<div class="app-card__votes"><span>{item.val.votes_count}</span>votes</div>
-				
+
 					<span class={cssClass} role="button">
 						{isYour ? 'Your vote' : 'Vote'}
 					</span>
@@ -248,12 +248,12 @@ class Home extends Component {
 	render() {
 		const { showLogin, showShare, slug, apps, votes, showAllDesigns, showAllFeatures, showAllIndies, user, email } = this.state;
 
-		const designsApps = apps.filter(app => app.val.category === 'design');
-		const slicedDesignsApps = apps.filter(app => app.val.category === 'design').splice(0, 4);
-		const featuresApps = apps.filter(app => app.val.category === 'features');
-		const slicedFeaturesApps = apps.filter(app => app.val.category === 'features').splice(0, 4);
-		const indiesApps = apps.filter(app => app.val.category === 'indie');
-		const slicedIndiesApps = apps.filter(app => app.val.category === 'indie').splice(0, 4);
+		const designsApps = apps.filter(app => app.val.category === 'design').sort((a, b) => a.val.votes_count < b.val.votes_count);
+		const slicedDesignsApps = apps.filter(app => app.val.category === 'design').sort((a, b) => a.val.votes_count < b.val.votes_count).splice(0, 4);
+		const featuresApps = apps.filter(app => app.val.category === 'features').sort((a, b) => a.val.votes_count < b.val.votes_count);
+		const slicedFeaturesApps = apps.filter(app => app.val.category === 'features').sort((a, b) => a.val.votes_count < b.val.votes_count).splice(0, 4);
+		const indiesApps = apps.filter(app => app.val.category === 'indie').sort((a, b) => a.val.votes_count < b.val.votes_count);
+		const slicedIndiesApps = apps.filter(app => app.val.category === 'indie').sort((a, b) => a.val.votes_count < b.val.votes_count).splice(0, 4);
 
 		const selectedApp = apps.find(i => slugify(i.val.name) === slug);
 
@@ -301,12 +301,25 @@ class Home extends Component {
 				  />
 					<section class="prize-disclaimer">
 						<div class="prize-info-block">
-							<div class="prize-info-block__title">Choose the app in each category and win a XIAMOMI MI BAND 3 BLACK</div>
-							<div class="prize-info-block__text">Izlozes noteikumi: Lietotājam jāizvēlas viena lietotne katrā kategorijā (Best Design, Best Features, Best Indie). Izloze notiks no x.10.2018. līdz 16.11.2018. Izlozes rezultāti tiks publicēti https://devfest2018.gdg.lv vietnē 16.11.2018.</div>
+							<div class="prize-info-block__title">
+							Best App Awards 2018 is the first mobile application award in Baltics. Award is supported by DevFestBaltics conference.<br/><br/>
+							Vote for the best app in each category and win Xiaomi Mi Band 3!
+							</div>
+
+
+<div class="prize-info-block__text"><br/><br/>Rules:<br/><br/>
+	<ul>
+<li>1. Person must vote for the app in each category (Best Design, Best Features, Best Indie) and share any decision on Facebook or Twitter.</li>
+<li>2. Lottery is held from 16.11.2018 to 13.12.2018.</li>
+<li>3. Lottery results will be published on Facebook DevFestBaltics page on 14.11.2018. Results will be published on <a href="https://devfest2018.gdg.lv">DevFestBaltics 2018 site</a> on 14.12.2018.</li>
+</ul>
+</div>
 						</div>
 					</section>
 					<section class="nomination-section">
 						<h1 class="heading-h1">Category Best Design Award 2018</h1>
+						<div class="heading-desc">Design that inspires</div>
+
 						<div class="votes-counter"><span>{total(designsApps)}</span>votes</div>
 						<div class="leaders-block">
 							<div class="leaders-block__title">Leaders</div>
@@ -326,6 +339,7 @@ class Home extends Component {
 					</section>
 					<section class="nomination-section">
 						<h1 class="heading-h1">Category Best Features Award 2018</h1>
+						<div class="heading-desc">Features you adore</div>
 						<div class="votes-counter"><span>{total(featuresApps)}</span>votes</div>
 						<div class="leaders-block">
 							<div class="leaders-block__title">Leaders</div>
@@ -345,6 +359,7 @@ class Home extends Component {
 					</section>
 					<section class="nomination-section">
 						<h1 class="heading-h1">Category Best Indie App Award 2018</h1>
+						<div class="heading-desc">1-3 developer team who made awesome app</div>
 						<div class="votes-counter"><span>{total(indiesApps)}</span>votes</div>
 						<div class="leaders-block">
 							<div class="leaders-block__title">Leaders</div>
@@ -419,17 +434,16 @@ class Home extends Component {
 							</div>
 						</div>
 					)}
-					
+
 					{showLogin && (
 						<div class="sign-in-modal modal modal_visible">
 							<div class="modal-head">
-								<div class="modal-head__title">Sign In With Social Network</div>
+								<div class="modal-head__title">Sign In with social network</div>
 								<div class="modal-close" onClick={this.handleCloseModal} />
 							</div>
 							<div class="modal-content">
 								<div class="sign-in-modal-content">
-									<div class="modal-heading">Please Sign in for voting</div>
-									<div class="modal-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+									<div class="modal-heading">Please Sign In to vote</div>
 									<div class="sign-in-buttons">
 										<div class="sign-in-buttons__facebook" onClick={e => this.handleSocialLogin(e, new firebase.auth.FacebookAuthProvider())} />
 										<div class="sign-in-buttons__gplus" onClick={e => this.handleSocialLogin(e, new firebase.auth.GoogleAuthProvider())} />
@@ -447,8 +461,8 @@ class Home extends Component {
 							</div>
 							<div class="modal-content">
 								<div class="sign-in-modal-content">
-									<div class="modal-heading">Thank You for your voice!</div>
-									<div class="modal-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+									<div class="modal-heading">Thank you for vote!</div>
+									<div class="modal-text">Vote for the best app in each category and win Xiaomi Mi Band 3!</div>
 									<div class="share-block">
 										<div class="modal-text">"{
 											shareText.replace('APP', selectedApp.val.title)
@@ -456,7 +470,7 @@ class Home extends Component {
 										}"</div>
 										<div class="share-buttons-flex">
 											<button class="facebook-share-button" onClick={e => this.handleFacebookShare(e, selectedApp)} style="margin-right: 0;" />
-											
+
 											<a class="twitter-share-button"
 												href={`https://twitter.com/intent/tweet?text=${encodeURI(
 													shareText.replace('APP', selectedApp.val.title)
